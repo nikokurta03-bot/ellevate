@@ -1,0 +1,61 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// Korisnici sustava (admini i obični korisnici)
+model User {
+  id              Int       @id @default(autoincrement())
+  email           String    @unique
+  password        String    // hashed with bcrypt
+  firstName       String
+  lastName        String
+  oib             String    @unique
+  address         String?
+  dateOfBirth     DateTime?
+  heightCm        Int?
+  weightKg        Float?
+  characteristics String?   // dodatne karakteristike
+  role            String    @default("user") // "admin" ili "user"
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  reservations Reservation[]
+}
+
+// Termini treninga
+model TrainingSlot {
+  id          Int      @id @default(autoincrement())
+  date        DateTime // datum treninga
+  startTime   String   // format: "08:00", "09:00", "18:00", "19:00", "20:00"
+  endTime     String   // format: "09:00", "10:00", "19:00", "20:00", "21:00"
+  maxCapacity Int      @default(8)
+  createdAt   DateTime @default(now())
+
+  reservations Reservation[]
+
+  @@unique([date, startTime]) // jedan termin po datumu i vremenu
+}
+
+// Rezervacije
+model Reservation {
+  id          Int       @id @default(autoincrement())
+  userId      Int
+  slotId      Int
+  status      String    @default("active") // "active" ili "cancelled"
+  createdAt   DateTime  @default(now())
+  cancelledAt DateTime?
+
+  user User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  slot TrainingSlot @relation(fields: [slotId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, slotId]) // korisnik može imati samo jednu rezervaciju po terminu
+}

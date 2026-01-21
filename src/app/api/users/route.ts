@@ -1,0 +1,104 @@
+import { NextRequest } from 'next/server';
+import { prisma } from '@/lib/prisma';
+import { excludePassword, errorResponse, successResponse, hashPassword, validateOIB } from '@/lib/helpers';
+import { CreateUserInput } from '@/types';
+
+// GET /api/users - Dohvati sve korisnike
+export async function GET(request: NextRequest) {
+    try {
+        const { searchParams } = new URL(request.url);
+        const role = searchParams.get('role');
+        const search = searchParams.get('search');
+
+        const where: any = {};
+
+        if (role) {
+            where.role = role;
+        }
+
+        if (search) {
+            where.OR = [
+                { firstName: { contains: search } },
+                { lastName: { contains: search } },
+                { email: { contains: search } },
+                { oib: { contains: search } },
+            ];
+        }
+
+        const users = await prisma.user.findMany({
+            where,
+            orderBy: { createdAt: 'desc' },
+        });
+
+        const usersWithoutPassword = users.map(excludePassword);
+
+        return successResponse(usersWithoutPassword);
+    } catch (error) {
+        console.error('Error fetching users:', error);
+        return errorResponse('Greška pri dohvaćanju korisnika', 500);
+    }
+}
+
+// POST /api/users - Kreiraj novog korisnika
+export async function POST(request: NextRequest) {
+    try {
+        const body: CreateUserInput = await request.json();
+
+        // Validate required fields
+        if (!body.email || !body.password || !body.firstName || !body.lastName || !body.oib) {
+            return errorResponse('Sva obavezna polja moraju biti popunjena');
+        }
+
+        // Validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(body.email)) {
+            return errorResponse('Email adresa nije ispravna');
+        }
+
+        // Validate OIB
+        if (!validateOIB(body.oib)) {
+            return errorResponse('OIB nije ispravan');
+        }
+
+        // Check if email already exists
+        const existingEmail = await prisma.user.findUnique({
+            where: { email: body.email },
+        });
+        if (existingEmail) {
+            return errorResponse('Korisnik s ovom email adresom već postoji');
+        }
+
+        // Check if OIB already exists
+        const existingOIB = await prisma.user.findUnique({
+            where: { oib: body.oib },
+        });
+        if (existingOIB) {
+            return errorResponse('Korisnik s ovim OIB-om već postoji');
+        }
+
+        // Hash password
+        const hashedPassword = await hashPassword(body.password);
+
+        // Create user
+        const user = await prisma.user.create({
+            data: {
+                email: body.email,
+                password: hashedPassword,
+                firstName: body.firstName,
+                lastName: body.lastName,
+                oib: body.oib,
+                address: body.address || null,
+                dateOfBirth: body.dateOfBirth ? new Date(body.dateOfBirth) : null,
+                heightCm: body.heightCm || null,
+                weightKg: body.weightKg || null,
+                characteristics: body.characteristics || null,
+                role: body.role || 'user',
+            },
+        });
+
+        return successResponse(excludePassword(user), 201);
+    } catch (error) {
+        console.error('Error creating user:', error);
+        return errorResponse('Greška pri kreiranju korisnika', 500);
+    }
+}
