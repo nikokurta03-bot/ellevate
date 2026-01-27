@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import AdminNav from '@/components/AdminNav';
 import { ApiResponse, TrainingSlotWithCount } from '@/types';
-import { format, startOfWeek, addDays, getWeek, addWeeks, subWeeks } from 'date-fns';
+import { format, startOfWeek, addDays, addWeeks } from 'date-fns';
 import { hr } from 'date-fns/locale';
 
 export default function AdminSchedulePage() {
@@ -11,7 +11,13 @@ export default function AdminSchedulePage() {
     const [weekOffset, setWeekOffset] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
 
-    const fetchSlots = async () => {
+    // 🚀 OPTIMIZACIJA: Memoizirani izračuni datuma
+    const weekStart = useMemo(() => startOfWeek(addWeeks(new Date(), weekOffset), { weekStartsOn: 1 }), [weekOffset]);
+    const weekDays = useMemo(() => [...Array(5)].map((_, i) => addDays(weekStart, i)), [weekStart]);
+    const timeRows = useMemo(() => ['08:00', '09:00', '18:00', '19:00', '20:00'], []);
+
+    // 🚀 OPTIMIZACIJA: useCallback za stabilnu referencu
+    const fetchSlots = useCallback(async () => {
         setIsLoading(true);
         try {
             const response = await fetch(`/api/slots?week=${weekOffset}`);
@@ -24,13 +30,14 @@ export default function AdminSchedulePage() {
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [weekOffset]);
 
     useEffect(() => {
         fetchSlots();
-    }, [weekOffset]);
+    }, [fetchSlots]);
 
-    const generateSlots = async () => {
+    // 🚀 OPTIMIZACIJA: useCallback za generateSlots
+    const generateSlots = useCallback(async () => {
         if (!confirm('Želite li generirati termine za ovaj tjedan?')) return;
 
         try {
@@ -47,12 +54,7 @@ export default function AdminSchedulePage() {
         } catch (err) {
             alert('Greška pri generiranju termina');
         }
-    };
-
-    const weekStart = startOfWeek(addWeeks(new Date(), weekOffset), { weekStartsOn: 1 });
-    const weekDays = [...Array(5)].map((_, i) => addDays(weekStart, i));
-
-    const timeRows = ['08:00', '09:00', '18:00', '19:00', '20:00'];
+    }, [weekOffset, fetchSlots]);
 
     return (
         <div className="min-h-screen">
@@ -110,8 +112,8 @@ export default function AdminSchedulePage() {
                                             <div key={day.toString()} className="px-2">
                                                 {slot ? (
                                                     <div className={`p-3 rounded-xl border transition-all ${slot.currentCount >= slot.maxCapacity
-                                                            ? 'bg-red-500/10 border-red-500/20'
-                                                            : 'bg-emerald-500/10 border-emerald-500/20'
+                                                        ? 'bg-red-500/10 border-red-500/20'
+                                                        : 'bg-emerald-500/10 border-emerald-500/20'
                                                         }`}>
                                                         <div className="flex justify-between items-center mb-1">
                                                             <span className="text-xs font-bold text-white uppercase">Grupni</span>

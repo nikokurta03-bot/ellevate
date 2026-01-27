@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import UserNav from '@/components/UserNav';
 import { useAuth } from '@/context/AuthContext';
 import { ApiResponse, TrainingSlotWithCount } from '@/types';
-import { format, startOfWeek, addDays, addWeeks, subWeeks } from 'date-fns';
+import { format, startOfWeek, addDays, addWeeks } from 'date-fns';
 import { hr } from 'date-fns/locale';
 
 export default function UserDashboard() {
@@ -15,36 +15,49 @@ export default function UserDashboard() {
     const [isLoading, setIsLoading] = useState(true);
     const [actionLoading, setActionLoading] = useState<number | null>(null);
 
-    const fetchData = async () => {
+    // 🚀 OPTIMIZACIJA: Memoizirani izračuni datuma
+    const weekStart = useMemo(() => startOfWeek(addWeeks(new Date(), weekOffset), { weekStartsOn: 1 }), [weekOffset]);
+    const weekDays = useMemo(() => [...Array(5)].map((_, i) => addDays(weekStart, i)), [weekStart]);
+    const timeRows = useMemo(() => ['08:00', '09:00', '18:00', '19:00', '20:00'], []);
+
+    // 🚀 OPTIMIZACIJA: useCallback za stabilnu referencu
+    const fetchData = useCallback(async () => {
         setIsLoading(true);
         try {
-            // Fetch slots
-            const slotsRes = await fetch(`/api/slots?week=${weekOffset}`);
-            const slotsData: ApiResponse<TrainingSlotWithCount[]> = await slotsRes.json();
+            // 🚀 OPTIMIZACIJA: Paralelni API pozivi
+            const fetchPromises: Promise<Response>[] = [
+                fetch(`/api/slots?week=${weekOffset}`)
+            ];
+
+            if (user) {
+                fetchPromises.push(fetch(`/api/reservations?userId=${user.id}&status=active`));
+            }
+
+            const responses = await Promise.all(fetchPromises);
+            const [slotsData, resData] = await Promise.all(
+                responses.map(r => r.json())
+            );
+
             if (slotsData.success) {
                 setSlots(slotsData.data);
             }
 
-            // Fetch current user reservations
-            if (user) {
-                const resRes = await fetch(`/api/reservations?userId=${user.id}&status=active`);
-                const resData = await resRes.json();
-                if (resData.success) {
-                    setUserReservations(resData.data.map((r: any) => r.slotId));
-                }
+            if (user && resData?.success) {
+                setUserReservations(resData.data.map((r: any) => r.slotId));
             }
         } catch (err) {
             console.error('Failed to fetch user dashboard data', err);
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [weekOffset, user]);
 
     useEffect(() => {
         fetchData();
-    }, [weekOffset, user]);
+    }, [fetchData]);
 
-    const handleBooking = async (slotId: number) => {
+    // 🚀 OPTIMIZACIJA: useCallback za handleBooking
+    const handleBooking = useCallback(async (slotId: number) => {
         if (!user) return;
         setActionLoading(slotId);
 
@@ -86,11 +99,7 @@ export default function UserDashboard() {
         } finally {
             setActionLoading(null);
         }
-    };
-
-    const weekStart = startOfWeek(addWeeks(new Date(), weekOffset), { weekStartsOn: 1 });
-    const weekDays = [...Array(5)].map((_, i) => addDays(weekStart, i));
-    const timeRows = ['08:00', '09:00', '18:00', '19:00', '20:00'];
+    }, [user, userReservations, fetchData]);
 
     return (
         <div className="min-h-screen">
@@ -157,10 +166,10 @@ export default function UserDashboard() {
                                                     onClick={() => handleBooking(slot.id)}
                                                     disabled={actionLoading === slot.id || (isFull && !isBooked)}
                                                     className={`w-full py-2 rounded-xl text-sm font-bold transition-all ${isBooked
-                                                            ? 'bg-red-500/10 text-red-500 hover:bg-red-500/20 border border-red-500/20'
-                                                            : isFull
-                                                                ? 'bg-slate-800 text-slate-500 cursor-not-allowed'
-                                                                : 'bg-indigo-600 text-white hover:bg-indigo-500 shadow-lg shadow-indigo-500/20'
+                                                        ? 'bg-red-500/10 text-red-500 hover:bg-red-500/20 border border-red-500/20'
+                                                        : isFull
+                                                            ? 'bg-slate-800 text-slate-500 cursor-not-allowed'
+                                                            : 'bg-indigo-600 text-white hover:bg-indigo-500 shadow-lg shadow-indigo-500/20'
                                                         }`}
                                                 >
                                                     {actionLoading === slot.id

@@ -4,7 +4,12 @@ import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
 import RouteGuard from "@/components/RouteGuard";
 
-const inter = Inter({ subsets: ["latin"] });
+// 🚀 OPTIMIZACIJA: display swap sprječava FOIT (Flash of Invisible Text)
+const inter = Inter({
+  subsets: ["latin"],
+  display: 'swap',
+  preload: true,
+});
 
 export const metadata: Metadata = {
   title: "Ellevate - Rezervacije Grupnih Treninga",

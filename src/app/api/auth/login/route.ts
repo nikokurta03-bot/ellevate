@@ -6,7 +6,8 @@ import { errorResponse, successResponse, verifyPassword, excludePassword } from 
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
-        const { email, password } = body;
+        const email = body.email?.trim().toLowerCase();
+        const password = body.password;
 
         if (!email || !password) {
             return errorResponse('Email i lozinka su obavezni');
@@ -23,6 +24,7 @@ export async function POST(request: NextRequest) {
 
         // Verify password
         const isValid = await verifyPassword(password, user.password);
+
         if (!isValid) {
             return errorResponse('Pogrešan email ili lozinka', 401);
         }
@@ -32,8 +34,8 @@ export async function POST(request: NextRequest) {
             user: excludePassword(user),
             message: 'Uspješna prijava',
         });
-    } catch (error) {
+    } catch (error: any) {
         console.error('Error logging in:', error);
-        return errorResponse('Greška pri prijavi', 500);
+        return errorResponse(`Greška pri prijavi: ${error.message || 'Nepoznata greška'}`, 500);
     }
 }
