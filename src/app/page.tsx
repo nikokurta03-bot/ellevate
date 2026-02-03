@@ -66,7 +66,7 @@ export default function LoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
-                placeholder="admin@ellevate.hr"
+                placeholder="Unesite email"
               />
             </div>
 
@@ -98,22 +98,6 @@ export default function LoginPage() {
               {isLoading ? 'Prijava u tijeku...' : 'Prijavi se'}
             </button>
           </form>
-
-          <div className="mt-8 pt-6 border-t border-white/10 text-center">
-            <p className="text-slate-400 text-sm mb-4">Testni podaci:</p>
-            <div className="grid grid-cols-2 gap-2 text-xs">
-              <div className="bg-white/5 p-2 rounded">
-                <p className="text-indigo-400 font-bold">Admin</p>
-                <p>admin@ellevate.hr</p>
-                <p>admin123</p>
-              </div>
-              <div className="bg-white/5 p-2 rounded">
-                <p className="text-emerald-400 font-bold">Korisnik</p>
-                <p>marko@example.com</p>
-                <p>user123</p>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </div>

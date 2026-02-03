@@ -1,93 +1,44 @@
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
-import { addDays, startOfWeek, format } from 'date-fns';
+import { addDays, format } from 'date-fns';
 
 const prisma = new PrismaClient();
 
 const TRAINING_TIMES = [
-    { start: '08:00', end: '09:00' },
     { start: '09:00', end: '10:00' },
-    { start: '18:00', end: '19:00' },
-    { start: '19:00', end: '20:00' },
-    { start: '20:00', end: '21:00' },
+    { start: '19:30', end: '20:30' },
+    { start: '20:30', end: '21:30' },
 ];
 
 async function main() {
     console.log('🌱 Seeding database...');
 
-    const hashedPassword = await bcrypt.hash('admin123', 10);
+    const hashedPassword = await bcrypt.hash('Ellevate123456', 10);
 
     const admin = await prisma.user.upsert({
-        where: { email: 'admin@ellevate.hr' },
-        update: {},
+        where: { email: 'mateazadar11@gmail.com' },
+        update: {
+            password: hashedPassword,
+        },
         create: {
-            email: 'admin@ellevate.hr',
+            email: 'mateazadar11@gmail.com',
             password: hashedPassword,
             firstName: 'Admin',
-            lastName: 'Korisnik',
-            oib: '12345678901',
+            lastName: 'Mateazadar',
+            oib: '00000000000',
             role: 'admin',
-            address: 'Ulica primjera 1, Zagreb',
+            address: 'Ulica primjera 1, Zadar',
         },
     });
 
     console.log('✅ Admin korisnik kreiran:', admin.email);
 
-    const testUsers = [
-        {
-            email: 'marko@example.com',
-            firstName: 'Marko',
-            lastName: 'Marković',
-            oib: '11111111111',
-            address: 'Ilica 10, Zagreb',
-            dateOfBirth: new Date('1990-05-15'),
-            heightCm: 180,
-            weightKg: 80,
-            characteristics: 'Početnik, želi izgubiti težinu',
-        },
-        {
-            email: 'ana@example.com',
-            firstName: 'Ana',
-            lastName: 'Anić',
-            oib: '22222222222',
-            address: 'Maksimirska 20, Zagreb',
-            dateOfBirth: new Date('1995-08-22'),
-            heightCm: 165,
-            weightKg: 58,
-            characteristics: 'Napredna, fokus na snagu',
-        },
-        {
-            email: 'ivan@example.com',
-            firstName: 'Ivan',
-            lastName: 'Ivić',
-            oib: '33333333333',
-            address: 'Savska 30, Zagreb',
-            dateOfBirth: new Date('1988-03-10'),
-            heightCm: 175,
-            weightKg: 85,
-            characteristics: 'Srednja razina, rehabilitacija koljena',
-        },
-    ];
+    // Počni od ponedjeljka 9. veljače 2026.
+    const startDate = new Date('2026-02-09');
 
-    for (const userData of testUsers) {
-        const userPassword = await bcrypt.hash('user123', 10);
-        const user = await prisma.user.upsert({
-            where: { email: userData.email },
-            update: {},
-            create: {
-                ...userData,
-                password: userPassword,
-                role: 'user',
-            },
-        });
-        console.log('✅ Testni korisnik kreiran:', user.email);
-    }
-
-    const today = new Date();
-    const startDate = startOfWeek(today, { weekStartsOn: 1 });
-
-    for (let week = 0; week < 2; week++) {
-        for (let day = 0; day < 5; day++) {
+    // Kreiraj termine za 4 tjedna unaprijed
+    for (let week = 0; week < 4; week++) {
+        for (let day = 0; day < 5; day++) { // Ponedjeljak do Petak
             const date = addDays(startDate, week * 7 + day);
 
             for (const time of TRAINING_TIMES) {
@@ -110,7 +61,7 @@ async function main() {
         }
     }
 
-    console.log('✅ Termini kreirani za sljedeća 2 tjedna');
+    console.log('✅ Termini kreirani za sljedeća 4 tjedna (od 9.2.2026.)');
     console.log('🎉 Seeding završen!');
 }
 
