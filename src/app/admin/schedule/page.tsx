@@ -14,7 +14,7 @@ export default function AdminSchedulePage() {
     // 🚀 OPTIMIZACIJA: Memoizirani izračuni datuma
     const weekStart = useMemo(() => startOfWeek(addWeeks(new Date(), weekOffset), { weekStartsOn: 1 }), [weekOffset]);
     const weekDays = useMemo(() => [...Array(5)].map((_, i) => addDays(weekStart, i)), [weekStart]);
-    const timeRows = useMemo(() => ['08:00', '09:00', '18:00', '19:00', '20:00'], []);
+    const timeRows = useMemo(() => ['09:00', '19:30', '20:30'], []);
 
     // 🚀 OPTIMIZACIJA: useCallback za stabilnu referencu
     const fetchSlots = useCallback(async () => {

@@ -81,11 +81,9 @@ export async function POST(request: NextRequest) {
         const { weekOffset = 0 } = body;
 
         const TRAINING_TIMES = [
-            { start: '08:00', end: '09:00' },
             { start: '09:00', end: '10:00' },
-            { start: '18:00', end: '19:00' },
-            { start: '19:00', end: '20:00' },
-            { start: '20:00', end: '21:00' },
+            { start: '19:30', end: '20:30' },
+            { start: '20:30', end: '21:30' },
         ];
 
         const today = new Date();
