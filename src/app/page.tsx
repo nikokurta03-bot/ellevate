@@ -3,12 +3,14 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 import { ApiResponse } from '@/types';
 
 const blogArticles = [
   {
     id: 1,
+    slug: 'grupni-treninzi',
     title: 'Zašto su grupni treninzi učinkovitiji?',
     excerpt: 'Otkrijte kako zajednička energija i motivacija grupe može transformirati vaše fitness rezultate i učiniti vježbanje zabavnijim.',
     image: '/blog/group-training.png',
@@ -17,6 +19,7 @@ const blogArticles = [
   },
   {
     id: 2,
+    slug: 'trening-snage',
     title: 'Osnove treninga snage za žene',
     excerpt: 'Razbijamo mitove o treningu snage i pokazujemo kako pravilno dizanje utega može oblikovati vaše tijelo.',
     image: '/blog/strength-training.png',
@@ -25,6 +28,7 @@ const blogArticles = [
   },
   {
     id: 3,
+    slug: 'hiit-vs-kardio',
     title: 'HIIT vs. Kardio: Što je bolje za vas?',
     excerpt: 'Usporedba intenzivnog intervalnog treninga i tradicionalnog kardija - pronađite što odgovara vašim ciljevima.',
     image: '/blog/cardio-workout.png',
@@ -33,6 +37,7 @@ const blogArticles = [
   },
   {
     id: 4,
+    slug: 'istezanje-fleksibilnost',
     title: 'Važnost istezanja i fleksibilnosti',
     excerpt: 'Naučite zašto je fleksibilnost ključna za prevenciju ozljeda i kako ju poboljšati kroz svakodnevne vježbe.',
     image: '/blog/stretching-yoga.png',
@@ -41,6 +46,7 @@ const blogArticles = [
   },
   {
     id: 5,
+    slug: 'zdrave-navike',
     title: 'Zdrave navike za aktivni životni stil',
     excerpt: 'Praktični savjeti za održavanje energije, hidrataciju i oporavak koji će unaprijediti vaše treninge.',
     image: '/blog/healthy-lifestyle.png',
@@ -189,9 +195,10 @@ export default function HomePage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {blogArticles.map((article, index) => (
-              <article
+              <Link
                 key={article.id}
-                className="glass-card group cursor-pointer hover:scale-[1.02] transition-all duration-300 overflow-hidden"
+                href={`/blog/${article.slug}`}
+                className="glass-card group cursor-pointer hover:scale-[1.02] transition-all duration-300 overflow-hidden block"
                 style={{ animationDelay: `${index * 100}ms` }}
               >
                 <div className="relative h-48 -mx-6 -mt-6 mb-4 overflow-hidden">
@@ -221,7 +228,7 @@ export default function HomePage() {
                     Pročitaj više →
                   </span>
                 </div>
-              </article>
+              </Link>
             ))}
           </div>
         </div>
