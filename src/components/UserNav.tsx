@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 
@@ -25,8 +26,15 @@ export default function UserNav() {
         <>
             <nav className="glass sticky top-0 z-50 px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between border-b border-white/10">
                 <div className="flex items-center gap-4 sm:gap-8">
-                    <Link href="/dashboard" className="text-xl sm:text-2xl font-bold gradient-text">
-                        Ellevate
+                    <Link href="/dashboard" className="flex items-center">
+                        <Image
+                            src="/ellevate_logo.png"
+                            alt="Ellevate"
+                            width={140}
+                            height={40}
+                            className="h-8 sm:h-10 w-auto"
+                            priority
+                        />
                     </Link>
                     {/* Desktop Navigation */}
                     <div className="hidden md:flex items-center gap-4">

@@ -101,11 +101,15 @@ export default function HomePage() {
       <nav className="fixed top-0 left-0 right-0 z-50 glass border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <div className="flex items-center gap-2">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-pink-300 to-purple-600 flex items-center justify-center">
-                <span className="text-white font-bold text-xl">E</span>
-              </div>
-              <span className="text-xl font-bold gradient-text">Ellevate</span>
+            <div className="flex items-center">
+              <Image
+                src="/ellevate_logo.png"
+                alt="Ellevate"
+                width={140}
+                height={40}
+                className="h-8 sm:h-10 w-auto"
+                priority
+              />
             </div>
             <button
               onClick={() => setShowLogin(true)}
@@ -259,11 +263,14 @@ export default function HomePage() {
       {/* Footer */}
       <footer className="border-t border-white/10 py-8 px-4">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-pink-300 to-purple-600 flex items-center justify-center">
-              <span className="text-white font-bold">E</span>
-            </div>
-            <span className="font-bold">Ellevate</span>
+          <div className="flex items-center">
+            <Image
+              src="/ellevate_logo.png"
+              alt="Ellevate"
+              width={100}
+              height={30}
+              className="h-8 w-auto"
+            />
           </div>
           <div className="text-slate-500 text-sm">
             © 2026 Ellevate. Sva prava pridržana.
