@@ -131,6 +131,18 @@ export default function HomePage() {
         </div>
 
         <div className="relative z-10 text-center px-4 max-w-5xl mx-auto">
+          {/* Large Logo */}
+          <div className="mb-8">
+            <Image
+              src="/ellevate_logo.png"
+              alt="Ellevate Fitness Studio"
+              width={400}
+              height={120}
+              className="mx-auto h-24 sm:h-32 md:h-40 w-auto"
+              priority
+            />
+          </div>
+
           <div className="mb-6 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-sm text-slate-300">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
             Rezervacije otvorene za veljače 2026.
