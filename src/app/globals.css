@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-primary: #f472b6;
-  --color-primary-dark: #ec4899;
+  --color-primary: #f9a8d4;
+  --color-primary-dark: #f472b6;
   --color-secondary: #10b981;
   --color-accent: #f59e0b;
   --color-background-dark: #0f0a14;
@@ -33,17 +33,17 @@ body {
 }
 
 @utility gradient-text {
-  @apply bg-clip-text text-transparent bg-gradient-to-r from-pink-400 to-rose-400;
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-pink-300 to-rose-300;
 }
 
 @utility gradient-bg {
-  background: radial-gradient(circle at top left, rgba(244, 114, 182, 0.15), transparent),
-    radial-gradient(circle at bottom right, rgba(251, 113, 133, 0.15), transparent),
+  background: radial-gradient(circle at top left, rgba(249, 168, 212, 0.15), transparent),
+    radial-gradient(circle at bottom right, rgba(253, 164, 175, 0.15), transparent),
     #0f0a14;
 }
 
 @utility btn-primary {
-  @apply px-6 py-3 bg-pink-600 hover:bg-pink-500 text-white rounded-xl font-semibold transition-all duration-200 active:scale-95 shadow-lg shadow-pink-500/20 disabled:opacity-50;
+  @apply px-6 py-3 bg-pink-400 hover:bg-pink-300 text-gray-900 rounded-xl font-semibold transition-all duration-200 active:scale-95 shadow-lg shadow-pink-400/20 disabled:opacity-50;
 }
 
 @utility btn-secondary {

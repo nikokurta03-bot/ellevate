@@ -102,7 +102,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center gap-2">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-pink-300 to-purple-600 flex items-center justify-center">
                 <span className="text-white font-bold text-xl">E</span>
               </div>
               <span className="text-xl font-bold gradient-text">Ellevate</span>
@@ -122,7 +122,7 @@ export default function HomePage() {
         {/* Animated background */}
         <div className="absolute inset-0 bg-gradient-to-br from-gray-950 via-pink-950/50 to-pink-950/30" />
         <div className="absolute inset-0">
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-pink-500/20 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-pink-300/20 rounded-full blur-3xl animate-pulse" />
           <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
         </div>
 
@@ -184,7 +184,7 @@ export default function HomePage() {
       <section id="blog" className="py-24 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <span className="text-pink-400 font-semibold text-sm uppercase tracking-wider">Blog</span>
+            <span className="text-pink-300 font-semibold text-sm uppercase tracking-wider">Blog</span>
             <h2 className="text-4xl md:text-5xl font-bold mt-2 mb-4">
               Fitness <span className="gradient-text">savjeti</span>
             </h2>
@@ -209,12 +209,12 @@ export default function HomePage() {
                     className="object-cover group-hover:scale-110 transition-transform duration-500"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent" />
-                  <span className="absolute top-4 left-4 px-3 py-1 bg-pink-500/80 backdrop-blur-sm rounded-full text-xs font-semibold">
+                  <span className="absolute top-4 left-4 px-3 py-1 bg-pink-300/80 backdrop-blur-sm rounded-full text-xs font-semibold">
                     {article.category}
                   </span>
                 </div>
 
-                <h3 className="text-xl font-bold mb-2 group-hover:text-pink-400 transition-colors">
+                <h3 className="text-xl font-bold mb-2 group-hover:text-pink-300 transition-colors">
                   {article.title}
                 </h3>
 
@@ -224,7 +224,7 @@ export default function HomePage() {
 
                 <div className="flex items-center justify-between text-xs text-slate-500">
                   <span>🕐 {article.readTime} čitanja</span>
-                  <span className="text-pink-400 font-semibold group-hover:translate-x-1 transition-transform">
+                  <span className="text-pink-300 font-semibold group-hover:translate-x-1 transition-transform">
                     Pročitaj više →
                   </span>
                 </div>
@@ -237,7 +237,7 @@ export default function HomePage() {
       {/* CTA Section */}
       <section className="py-24 px-4">
         <div className="max-w-4xl mx-auto glass-card text-center relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-r from-pink-500/10 via-purple-500/10 to-pink-500/10" />
+          <div className="absolute inset-0 bg-gradient-to-r from-pink-300/10 via-purple-500/10 to-pink-300/10" />
           <div className="relative z-10">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
               Spremni za transformaciju?
@@ -260,7 +260,7 @@ export default function HomePage() {
       <footer className="border-t border-white/10 py-8 px-4">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-pink-300 to-purple-600 flex items-center justify-center">
               <span className="text-white font-bold">E</span>
             </div>
             <span className="font-bold">Ellevate</span>
@@ -301,7 +301,7 @@ export default function HomePage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 transition-all"
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-300 transition-all"
                   placeholder="vas@email.com"
                 />
               </div>
@@ -315,7 +315,7 @@ export default function HomePage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 transition-all"
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-300 transition-all"
                   placeholder="••••••••"
                 />
               </div>

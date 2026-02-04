@@ -64,8 +64,8 @@ export default function MyReservationsPage() {
                             <div key={res.id} className={`glass-card flex flex-col md:flex-row justify-between items-center gap-6 ${res.status === 'cancelled' ? 'opacity-50 grayscale' : ''
                                 }`}>
                                 <div className="flex items-center gap-6 w-full md:w-auto">
-                                    <div className="bg-pink-600/20 p-4 rounded-2xl text-center min-w-[100px]">
-                                        <p className="text-xs font-bold text-pink-400 uppercase">{format(new Date(res.slot.date), 'EEE', { locale: hr })}</p>
+                                    <div className="bg-pink-300/20 p-4 rounded-2xl text-center min-w-[100px]">
+                                        <p className="text-xs font-bold text-pink-300 uppercase">{format(new Date(res.slot.date), 'EEE', { locale: hr })}</p>
                                         <p className="text-2xl font-bold">{format(new Date(res.slot.date), 'd.M.')}</p>
                                     </div>
 

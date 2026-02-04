@@ -79,7 +79,7 @@ export default function UsersAdminPage() {
                             placeholder="Pretraži po imenu, emailu ili OIB-u..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full px-4 py-3 sm:py-2 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 transition-all text-base"
+                            className="w-full px-4 py-3 sm:py-2 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-300 transition-all text-base"
                         />
                     </div>
 
@@ -94,7 +94,7 @@ export default function UsersAdminPage() {
                                             <div className="text-sm text-slate-400 mt-0.5">{user.email}</div>
                                             <div className="text-xs text-slate-500 mt-0.5">{user.oib}</div>
                                         </div>
-                                        <span className={`px-2 py-1 rounded-lg text-xs font-bold ${user.role === 'admin' ? 'bg-amber-500/20 text-amber-500' : 'bg-pink-500/20 text-pink-500'
+                                        <span className={`px-2 py-1 rounded-lg text-xs font-bold ${user.role === 'admin' ? 'bg-amber-500/20 text-amber-500' : 'bg-pink-300/20 text-pink-300'
                                             }`}>
                                             {user.role === 'admin' ? 'ADMIN' : 'USER'}
                                         </span>
@@ -149,7 +149,7 @@ export default function UsersAdminPage() {
                                                 <div className="text-xs text-slate-500">{user.oib}</div>
                                             </td>
                                             <td className="py-4">
-                                                <span className={`px-2 py-1 rounded-lg text-xs font-bold ${user.role === 'admin' ? 'bg-amber-500/20 text-amber-500' : 'bg-pink-500/20 text-pink-500'
+                                                <span className={`px-2 py-1 rounded-lg text-xs font-bold ${user.role === 'admin' ? 'bg-amber-500/20 text-amber-500' : 'bg-pink-300/20 text-pink-300'
                                                     }`}>
                                                     {user.role === 'admin' ? 'ADMIN' : 'USER'}
                                                 </span>

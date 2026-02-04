@@ -35,7 +35,7 @@ export default function UserNav() {
                                 key={link.href}
                                 href={link.href}
                                 className={`px-4 py-2 rounded-xl transition-all ${pathname === link.href
-                                    ? 'bg-pink-600 text-white'
+                                    ? 'bg-pink-400 text-white'
                                     : 'text-slate-400 hover:text-white hover:bg-white/5'
                                     }`}
                             >
@@ -48,7 +48,7 @@ export default function UserNav() {
                 <div className="flex items-center gap-2 sm:gap-4">
                     <div className="hidden sm:block text-right">
                         <p className="text-sm font-medium">{user?.firstName} {user?.lastName}</p>
-                        <p className="text-xs text-pink-400 font-bold uppercase tracking-tighter">Član</p>
+                        <p className="text-xs text-pink-300 font-bold uppercase tracking-tighter">Član</p>
                     </div>
                     <button onClick={handleLogout} className="hidden sm:block btn-secondary px-4 py-2">
                         Odjava
@@ -98,7 +98,7 @@ export default function UserNav() {
                     {/* User Info */}
                     <div className="mb-6 p-4 bg-white/5 rounded-xl">
                         <p className="font-medium">{user?.firstName} {user?.lastName}</p>
-                        <p className="text-xs text-pink-400 font-bold uppercase tracking-tighter">Član</p>
+                        <p className="text-xs text-pink-300 font-bold uppercase tracking-tighter">Član</p>
                     </div>
 
                     {/* Navigation Links */}
@@ -109,7 +109,7 @@ export default function UserNav() {
                                 href={link.href}
                                 onClick={() => setIsMobileMenuOpen(false)}
                                 className={`block px-4 py-3 rounded-xl transition-all ${pathname === link.href
-                                    ? 'bg-pink-600 text-white'
+                                    ? 'bg-pink-400 text-white'
                                     : 'text-slate-400 hover:text-white hover:bg-white/5'
                                     }`}
                             >

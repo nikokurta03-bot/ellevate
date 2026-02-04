@@ -129,7 +129,7 @@ export default function UserDashboard() {
                                     className="btn-secondary flex-1 sm:flex-none px-4 py-3 sm:py-2 text-lg sm:text-base"
                                 > → </button>
                             </div>
-                            <div className="glass px-4 sm:px-6 py-3 sm:py-2 rounded-xl flex items-center justify-center font-medium bg-pink-500/10 border-pink-500/20 text-sm sm:text-base">
+                            <div className="glass px-4 sm:px-6 py-3 sm:py-2 rounded-xl flex items-center justify-center font-medium bg-pink-300/10 border-pink-300/20 text-sm sm:text-base">
                                 {format(weekStart, 'd.M.')} - {format(addDays(weekStart, 4), 'd.M.yyyy.')}
                             </div>
                         </div>
@@ -141,7 +141,7 @@ export default function UserDashboard() {
                     {weekDays.map((day) => (
                         <div key={day.toString()} className="space-y-3 sm:space-y-6">
                             <div className="text-center p-3 sm:p-4 bg-white/5 rounded-xl sm:rounded-2xl border border-white/10 sm:sticky sm:top-24 z-10 backdrop-blur-md">
-                                <p className="text-pink-400 font-bold uppercase text-xs sm:text-sm tracking-widest">{format(day, 'EEEE', { locale: hr })}</p>
+                                <p className="text-pink-300 font-bold uppercase text-xs sm:text-sm tracking-widest">{format(day, 'EEEE', { locale: hr })}</p>
                                 <p className="text-xl sm:text-2xl font-bold">{format(day, 'd.M.')}</p>
                             </div>
 
@@ -156,7 +156,7 @@ export default function UserDashboard() {
                                     const isPast = slot ? new Date(`${slotDateStr}T${time}`) < new Date() : true;
 
                                     return (
-                                        <div key={time} className={`glass-card p-4 flex flex-col gap-3 border ${isBooked ? 'border-pink-500/40 bg-pink-500/5' : ''
+                                        <div key={time} className={`glass-card p-4 flex flex-col gap-3 border ${isBooked ? 'border-pink-300/40 bg-pink-300/5' : ''
                                             } ${isPast ? 'opacity-40 grayscale pointer-events-none' : ''}`}>
                                             <div className="flex justify-between items-center">
                                                 <span className="text-lg sm:text-xl font-bold">{time}</span>
@@ -177,7 +177,7 @@ export default function UserDashboard() {
                                                             <span
                                                                 key={res.id}
                                                                 className={`text-[10px] px-2 py-0.5 rounded-full ${user && res.user.id === user.id
-                                                                    ? 'bg-pink-500/30 text-indigo-300 font-semibold'
+                                                                    ? 'bg-pink-300/30 text-indigo-300 font-semibold'
                                                                     : 'bg-white/5 text-slate-400'
                                                                     }`}
                                                             >
@@ -196,7 +196,7 @@ export default function UserDashboard() {
                                                         ? 'bg-red-500/10 text-red-500 hover:bg-red-500/20 border border-red-500/20'
                                                         : isFull
                                                             ? 'bg-slate-800 text-slate-500 cursor-not-allowed'
-                                                            : 'bg-pink-600 text-white hover:bg-pink-500 shadow-lg shadow-pink-500/20'
+                                                            : 'bg-pink-400 text-white hover:bg-pink-300 shadow-lg shadow-pink-300/20'
                                                         }`}
                                                 >
                                                     {actionLoading === slot.id

@@ -77,7 +77,7 @@ export default function AdminDashboard() {
                             <div className="glass-card animate-fade-in delay-200">
                                 <p className="text-slate-400 text-sm mb-1">Aktivne rezervacije</p>
                                 <p className="text-4xl font-bold">{reservationCount}</p>
-                                <div className="mt-4 text-pink-400 text-xs flex items-center gap-1">
+                                <div className="mt-4 text-pink-300 text-xs flex items-center gap-1">
                                     <span>Ukupno prijavljenih polaznika</span>
                                 </div>
                             </div>
@@ -105,7 +105,7 @@ export default function AdminDashboard() {
                                 <div key={slot.id} className="glass-card flex flex-col justify-between">
                                     <div>
                                         <div className="flex justify-between items-start mb-4">
-                                            <div className="bg-pink-600/20 text-pink-400 px-3 py-1 rounded-lg text-sm font-bold">
+                                            <div className="bg-pink-300/20 text-pink-300 px-3 py-1 rounded-lg text-sm font-bold">
                                                 {slot.startTime} - {slot.endTime}
                                             </div>
                                             <div className={`px-2 py-1 rounded text-xs font-medium ${slot._count.reservations >= slot.maxCapacity

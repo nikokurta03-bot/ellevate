@@ -60,7 +60,7 @@ export default function BlogPage() {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between items-center h-16">
                         <Link href="/" className="flex items-center gap-2">
-                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center">
+                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-pink-300 to-purple-600 flex items-center justify-center">
                                 <span className="text-white font-bold text-xl">E</span>
                             </div>
                             <span className="text-xl font-bold gradient-text">Ellevate</span>
@@ -75,7 +75,7 @@ export default function BlogPage() {
             {/* Blog Header */}
             <section className="pt-24 pb-12 px-4">
                 <div className="max-w-7xl mx-auto text-center">
-                    <span className="text-pink-400 font-semibold text-sm uppercase tracking-wider">Blog</span>
+                    <span className="text-pink-300 font-semibold text-sm uppercase tracking-wider">Blog</span>
                     <h1 className="text-4xl md:text-5xl font-bold mt-2 mb-4">
                         Fitness <span className="gradient-text">savjeti</span>
                     </h1>
@@ -104,12 +104,12 @@ export default function BlogPage() {
                                         className="object-cover group-hover:scale-110 transition-transform duration-500"
                                     />
                                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent" />
-                                    <span className="absolute top-4 left-4 px-3 py-1 bg-pink-500/80 backdrop-blur-sm rounded-full text-xs font-semibold">
+                                    <span className="absolute top-4 left-4 px-3 py-1 bg-pink-300/80 backdrop-blur-sm rounded-full text-xs font-semibold">
                                         {article.category}
                                     </span>
                                 </div>
 
-                                <h3 className="text-xl font-bold mb-2 group-hover:text-pink-400 transition-colors">
+                                <h3 className="text-xl font-bold mb-2 group-hover:text-pink-300 transition-colors">
                                     {article.title}
                                 </h3>
 
@@ -119,7 +119,7 @@ export default function BlogPage() {
 
                                 <div className="flex items-center justify-between text-xs text-slate-500">
                                     <span>🕐 {article.readTime} čitanja</span>
-                                    <span className="text-pink-400 font-semibold group-hover:translate-x-1 transition-transform">
+                                    <span className="text-pink-300 font-semibold group-hover:translate-x-1 transition-transform">
                                         Pročitaj više →
                                     </span>
                                 </div>
@@ -133,7 +133,7 @@ export default function BlogPage() {
             <footer className="border-t border-white/10 py-8 px-4">
                 <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
                     <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center">
+                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-pink-300 to-purple-600 flex items-center justify-center">
                             <span className="text-white font-bold">E</span>
                         </div>
                         <span className="font-bold">Ellevate</span>
