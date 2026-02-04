@@ -149,7 +149,7 @@ export default function UserDashboard() {
                                     const isPast = slot ? new Date(`${slotDateStr}T${time}`) < new Date() : true;
 
                                     return (
-                                        <div key={time} className={`glass-card p-4 flex flex-col gap-4 border ${isBooked ? 'border-indigo-500/40 bg-indigo-500/5' : ''
+                                        <div key={time} className={`glass-card p-4 flex flex-col gap-3 border ${isBooked ? 'border-indigo-500/40 bg-indigo-500/5' : ''
                                             } ${isPast ? 'opacity-40 grayscale pointer-events-none' : ''}`}>
                                             <div className="flex justify-between items-center">
                                                 <span className="text-xl font-bold">{time}</span>
@@ -160,6 +160,26 @@ export default function UserDashboard() {
                                                     </span>
                                                 )}
                                             </div>
+
+                                            {/* Prikaz rezerviranih korisnika */}
+                                            {slot && slot.reservations && slot.reservations.length > 0 && (
+                                                <div className="border-t border-white/10 pt-2">
+                                                    <p className="text-[10px] text-slate-500 uppercase tracking-wider mb-1">Prijavljeni:</p>
+                                                    <div className="flex flex-wrap gap-1">
+                                                        {slot.reservations.map((res) => (
+                                                            <span
+                                                                key={res.id}
+                                                                className={`text-[10px] px-2 py-0.5 rounded-full ${user && res.user.id === user.id
+                                                                        ? 'bg-indigo-500/30 text-indigo-300 font-semibold'
+                                                                        : 'bg-white/5 text-slate-400'
+                                                                    }`}
+                                                            >
+                                                                {res.user.firstName} {res.user.lastName.charAt(0)}.
+                                                            </span>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            )}
 
                                             {slot ? (
                                                 <button
@@ -181,7 +201,7 @@ export default function UserDashboard() {
                                                                 : 'Rezerviraj'}
                                                 </button>
                                             ) : (
-                                                <div className="py-2 text-center text-xs text-slate-600 italic">Niije dostupno</div>
+                                                <div className="py-2 text-center text-xs text-slate-600 italic">Nije dostupno</div>
                                             )}
                                         </div>
                                     );
