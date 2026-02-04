@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
@@ -9,49 +9,127 @@ export default function UserNav() {
     const pathname = usePathname();
     const router = useRouter();
     const { logout, user } = useAuth();
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     const handleLogout = () => {
         logout();
         router.push('/');
     };
 
-    return (
-        <nav className="glass sticky top-0 z-50 px-6 py-4 flex items-center justify-between border-b border-white/10">
-            <div className="flex items-center gap-8">
-                <Link href="/dashboard" className="text-2xl font-bold gradient-text">
-                    Ellevate
-                </Link>
-                <div className="hidden md:flex items-center gap-4">
-                    <Link
-                        href="/dashboard"
-                        className={`px-4 py-2 rounded-xl transition-all ${pathname === '/dashboard'
-                                ? 'bg-indigo-600 text-white'
-                                : 'text-slate-400 hover:text-white hover:bg-white/5'
-                            }`}
-                    >
-                        Rezervacija termina
-                    </Link>
-                    <Link
-                        href="/dashboard/my-reservations"
-                        className={`px-4 py-2 rounded-xl transition-all ${pathname === '/dashboard/my-reservations'
-                                ? 'bg-indigo-600 text-white'
-                                : 'text-slate-400 hover:text-white hover:bg-white/5'
-                            }`}
-                    >
-                        Moje rezervacije
-                    </Link>
-                </div>
-            </div>
+    const navLinks = [
+        { href: '/dashboard', label: 'Rezervacija termina' },
+        { href: '/dashboard/my-reservations', label: 'Moje rezervacije' },
+    ];
 
-            <div className="flex items-center gap-4">
-                <div className="hidden sm:block text-right">
-                    <p className="text-sm font-medium">{user?.firstName} {user?.lastName}</p>
-                    <p className="text-xs text-indigo-400 font-bold uppercase tracking-tighter">Član</p>
+    return (
+        <>
+            <nav className="glass sticky top-0 z-50 px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between border-b border-white/10">
+                <div className="flex items-center gap-4 sm:gap-8">
+                    <Link href="/dashboard" className="text-xl sm:text-2xl font-bold gradient-text">
+                        Ellevate
+                    </Link>
+                    {/* Desktop Navigation */}
+                    <div className="hidden md:flex items-center gap-4">
+                        {navLinks.map((link) => (
+                            <Link
+                                key={link.href}
+                                href={link.href}
+                                className={`px-4 py-2 rounded-xl transition-all ${pathname === link.href
+                                    ? 'bg-indigo-600 text-white'
+                                    : 'text-slate-400 hover:text-white hover:bg-white/5'
+                                    }`}
+                            >
+                                {link.label}
+                            </Link>
+                        ))}
+                    </div>
                 </div>
-                <button onClick={handleLogout} className="btn-secondary px-4 py-2">
-                    Odjava
-                </button>
+
+                <div className="flex items-center gap-2 sm:gap-4">
+                    <div className="hidden sm:block text-right">
+                        <p className="text-sm font-medium">{user?.firstName} {user?.lastName}</p>
+                        <p className="text-xs text-indigo-400 font-bold uppercase tracking-tighter">Član</p>
+                    </div>
+                    <button onClick={handleLogout} className="hidden sm:block btn-secondary px-4 py-2">
+                        Odjava
+                    </button>
+                    {/* Mobile Hamburger Button */}
+                    <button
+                        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                        className="md:hidden p-2 rounded-xl hover:bg-white/10 transition-colors"
+                        aria-label="Toggle menu"
+                    >
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            {isMobileMenuOpen ? (
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            ) : (
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                            )}
+                        </svg>
+                    </button>
+                </div>
+            </nav>
+
+            {/* Mobile Menu Overlay */}
+            {isMobileMenuOpen && (
+                <div
+                    className="fixed inset-0 bg-black/60 z-40 md:hidden"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                />
+            )}
+
+            {/* Mobile Menu Slide-out */}
+            <div className={`fixed top-0 right-0 h-full w-72 bg-slate-900 border-l border-white/10 z-50 transform transition-transform duration-300 ease-in-out md:hidden ${isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
+                }`}>
+                <div className="p-6">
+                    {/* Close Button */}
+                    <div className="flex justify-between items-center mb-8">
+                        <span className="text-lg font-bold gradient-text">Menu</span>
+                        <button
+                            onClick={() => setIsMobileMenuOpen(false)}
+                            className="p-2 rounded-xl hover:bg-white/10 transition-colors"
+                        >
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    {/* User Info */}
+                    <div className="mb-6 p-4 bg-white/5 rounded-xl">
+                        <p className="font-medium">{user?.firstName} {user?.lastName}</p>
+                        <p className="text-xs text-indigo-400 font-bold uppercase tracking-tighter">Član</p>
+                    </div>
+
+                    {/* Navigation Links */}
+                    <div className="space-y-2">
+                        {navLinks.map((link) => (
+                            <Link
+                                key={link.href}
+                                href={link.href}
+                                onClick={() => setIsMobileMenuOpen(false)}
+                                className={`block px-4 py-3 rounded-xl transition-all ${pathname === link.href
+                                    ? 'bg-indigo-600 text-white'
+                                    : 'text-slate-400 hover:text-white hover:bg-white/5'
+                                    }`}
+                            >
+                                {link.label}
+                            </Link>
+                        ))}
+                    </div>
+
+                    {/* Logout Button */}
+                    <button
+                        onClick={() => {
+                            setIsMobileMenuOpen(false);
+                            handleLogout();
+                        }}
+                        className="w-full mt-6 btn-secondary py-3"
+                    >
+                        Odjava
+                    </button>
+                </div>
             </div>
-        </nav>
+        </>
     );
 }

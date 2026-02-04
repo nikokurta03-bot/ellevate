@@ -51,10 +51,10 @@ export default function AdminDashboard() {
         <div className="min-h-screen">
             <AdminNav />
 
-            <main className="p-6 max-w-7xl mx-auto">
-                <header className="mb-8 animate-fade-in">
-                    <h1 className="text-3xl font-bold mb-2">Dobrodošli natrag, Admin</h1>
-                    <p className="text-slate-400">Pregled aktivnosti za {formattedDate}</p>
+            <main className="p-4 sm:p-6 max-w-7xl mx-auto">
+                <header className="mb-6 sm:mb-8 animate-fade-in">
+                    <h1 className="text-2xl sm:text-3xl font-bold mb-2">Dobrodošli natrag, Admin</h1>
+                    <p className="text-slate-400 text-sm sm:text-base">Pregled aktivnosti za {formattedDate}</p>
                 </header>
 
                 {/* Stats Grid - 🚀 OPTIMIZACIJA: Skeleton loading */}

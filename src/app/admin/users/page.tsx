@@ -59,29 +59,74 @@ export default function UsersAdminPage() {
         <div className="min-h-screen">
             <AdminNav />
 
-            <main className="p-6 max-w-7xl mx-auto animate-fade-in">
-                <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
-                    <div>
-                        <h1 className="text-3xl font-bold mb-2">Upravljanje korisnicima</h1>
-                        <p className="text-slate-400">Popis svih članova i administratora sustava</p>
+            <main className="p-4 sm:p-6 max-w-7xl mx-auto animate-fade-in">
+                <header className="flex flex-col gap-4 mb-6 sm:mb-8">
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                        <div>
+                            <h1 className="text-2xl sm:text-3xl font-bold mb-1 sm:mb-2">Upravljanje korisnicima</h1>
+                            <p className="text-slate-400 text-sm sm:text-base">Popis svih članova i administratora sustava</p>
+                        </div>
+                        <button onClick={handleCreate} className="btn-primary flex items-center justify-center gap-2 w-full sm:w-auto">
+                            <span>+</span> Dodaj korisnika
+                        </button>
                     </div>
-                    <button onClick={handleCreate} className="btn-primary flex items-center gap-2">
-                        <span>+</span> Dodaj korisnika
-                    </button>
                 </header>
 
-                <div className="glass-card mb-8">
+                <div className="glass-card">
                     <div className="mb-6">
                         <input
                             type="text"
                             placeholder="Pretraži po imenu, emailu ili OIB-u..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full md:w-96 px-4 py-2 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+                            className="w-full px-4 py-3 sm:py-2 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all text-base"
                         />
                     </div>
 
-                    <div className="overflow-x-auto">
+                    {/* Mobile: Card Layout */}
+                    <div className="md:hidden space-y-4">
+                        {users.length > 0 ? (
+                            users.map((user) => (
+                                <div key={user.id} className="p-4 bg-white/5 rounded-xl border border-white/10">
+                                    <div className="flex justify-between items-start mb-3">
+                                        <div>
+                                            <div className="font-medium text-base">{user.firstName} {user.lastName}</div>
+                                            <div className="text-sm text-slate-400 mt-0.5">{user.email}</div>
+                                            <div className="text-xs text-slate-500 mt-0.5">{user.oib}</div>
+                                        </div>
+                                        <span className={`px-2 py-1 rounded-lg text-xs font-bold ${user.role === 'admin' ? 'bg-amber-500/20 text-amber-500' : 'bg-indigo-500/20 text-indigo-500'
+                                            }`}>
+                                            {user.role === 'admin' ? 'ADMIN' : 'USER'}
+                                        </span>
+                                    </div>
+                                    <div className="text-xs text-slate-400 mb-4">
+                                        {user.heightCm ? `${user.heightCm}cm` : '-'} / {user.weightKg ? `${user.weightKg}kg` : '-'}
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <button
+                                            onClick={() => handleEdit(user)}
+                                            className="flex-1 py-2 px-4 bg-white/5 hover:bg-white/10 rounded-xl text-sm font-medium transition-colors"
+                                        >
+                                            Uredi
+                                        </button>
+                                        <button
+                                            onClick={() => handleDelete(user.id)}
+                                            className="flex-1 py-2 px-4 bg-red-500/10 hover:bg-red-500/20 text-red-500 rounded-xl text-sm font-medium transition-colors"
+                                        >
+                                            Obriši
+                                        </button>
+                                    </div>
+                                </div>
+                            ))
+                        ) : (
+                            <div className="py-12 text-center text-slate-500">
+                                {isLoading ? 'Učitavanje korisnika...' : 'Nema pronađenih korisnika.'}
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Desktop: Table Layout */}
+                    <div className="hidden md:block overflow-x-auto">
                         <table className="w-full text-left">
                             <thead>
                                 <tr className="border-b border-white/10 text-slate-400 text-sm">
