@@ -250,7 +250,7 @@ export default function ArticlePage() {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between items-center h-16">
                         <Link href="/" className="flex items-center gap-2">
-                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center">
                                 <span className="text-white font-bold text-xl">E</span>
                             </div>
                             <span className="text-xl font-bold gradient-text">Ellevate</span>
@@ -266,7 +266,7 @@ export default function ArticlePage() {
             <header className="pt-24 pb-8">
                 <div className="max-w-4xl mx-auto px-4">
                     <div className="mb-6">
-                        <span className="px-3 py-1 bg-indigo-500/20 text-indigo-400 rounded-full text-sm font-semibold">
+                        <span className="px-3 py-1 bg-pink-500/20 text-pink-400 rounded-full text-sm font-semibold">
                             {article.category}
                         </span>
                     </div>
@@ -302,7 +302,7 @@ export default function ArticlePage() {
                             __html: article.content
                                 .replace(/## (.*)/g, '<h2 class="text-2xl font-bold mt-8 mb-4 gradient-text">$1</h2>')
                                 .replace(/### (.*)/g, '<h3 class="text-xl font-bold mt-6 mb-3 text-white">$1</h3>')
-                                .replace(/#### (.*)/g, '<h4 class="text-lg font-semibold mt-4 mb-2 text-indigo-400">$1</h4>')
+                                .replace(/#### (.*)/g, '<h4 class="text-lg font-semibold mt-4 mb-2 text-pink-400">$1</h4>')
                                 .replace(/\*\*(.*?)\*\*/g, '<strong class="text-white font-semibold">$1</strong>')
                                 .replace(/\n\n/g, '</p><p class="text-slate-300 leading-relaxed mb-4">')
                                 .replace(/^- (.*)/gm, '<li class="text-slate-300 ml-4 mb-2">• $1</li>')
@@ -329,7 +329,7 @@ export default function ArticlePage() {
             <footer className="border-t border-white/10 py-8 px-4">
                 <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
                     <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center">
                             <span className="text-white font-bold">E</span>
                         </div>
                         <span className="font-bold">Ellevate</span>

@@ -77,7 +77,7 @@ export default function AdminSchedulePage() {
                 : 'bg-emerald-500/10 border-emerald-500/20'
                 }`}>
                 <div className="flex justify-between items-center mb-3">
-                    <div className="bg-indigo-600/20 text-indigo-400 px-3 py-1 rounded-lg text-sm font-bold">
+                    <div className="bg-pink-600/20 text-pink-400 px-3 py-1 rounded-lg text-sm font-bold">
                         {time}
                     </div>
                     <span className={`text-xs px-2 py-1 rounded font-bold ${isFull ? 'bg-red-500/30 text-red-400' : 'bg-emerald-500/30 text-emerald-400'}`}>
@@ -132,7 +132,7 @@ export default function AdminSchedulePage() {
                                     key={day.toString()}
                                     onClick={() => setSelectedDayIndex(index)}
                                     className={`flex-shrink-0 px-4 py-2 rounded-xl text-center transition-all min-w-[70px] ${selectedDayIndex === index
-                                        ? 'bg-indigo-600 text-white'
+                                        ? 'bg-pink-600 text-white'
                                         : 'bg-white/5 text-slate-400 hover:bg-white/10'
                                         }`}
                                 >
@@ -167,7 +167,7 @@ export default function AdminSchedulePage() {
                                 <div className="text-slate-500 text-sm font-medium">Vrijeme</div>
                                 {weekDays.map((day) => (
                                     <div key={day.toString()} className="text-center">
-                                        <div className="text-sm font-bold uppercase tracking-wider text-indigo-400">
+                                        <div className="text-sm font-bold uppercase tracking-wider text-pink-400">
                                             {format(day, 'EEEE', { locale: hr })}
                                         </div>
                                         <div className="text-xs text-slate-500">{format(day, 'd. MMMM', { locale: hr })}</div>

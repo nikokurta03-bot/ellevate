@@ -36,7 +36,7 @@ export default function AdminNav() {
                                 key={item.href}
                                 href={item.href}
                                 className={`px-4 py-2 rounded-xl transition-all ${pathname === item.href
-                                    ? 'bg-indigo-600 text-white'
+                                    ? 'bg-pink-600 text-white'
                                     : 'text-slate-400 hover:text-white hover:bg-white/5'
                                     }`}
                             >
@@ -110,7 +110,7 @@ export default function AdminNav() {
                                 href={item.href}
                                 onClick={() => setIsMobileMenuOpen(false)}
                                 className={`block px-4 py-3 rounded-xl transition-all ${pathname === item.href
-                                    ? 'bg-indigo-600 text-white'
+                                    ? 'bg-pink-600 text-white'
                                     : 'text-slate-400 hover:text-white hover:bg-white/5'
                                     }`}
                             >

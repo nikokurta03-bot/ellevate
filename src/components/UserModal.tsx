@@ -109,7 +109,7 @@ export default function UserModal({ isOpen, onClose, onSave, user }: UserModalPr
 
                 <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="md:col-span-2 space-y-4">
-                        <h3 className="text-sm font-bold text-indigo-400 uppercase tracking-wider">Osnovni podaci</h3>
+                        <h3 className="text-sm font-bold text-pink-400 uppercase tracking-wider">Osnovni podaci</h3>
                     </div>
 
                     <div>
@@ -148,7 +148,7 @@ export default function UserModal({ isOpen, onClose, onSave, user }: UserModalPr
                     </div>
 
                     <div className="md:col-span-2 space-y-4 mt-4">
-                        <h3 className="text-sm font-bold text-indigo-400 uppercase tracking-wider">Dodatni podaci</h3>
+                        <h3 className="text-sm font-bold text-pink-400 uppercase tracking-wider">Dodatni podaci</h3>
                     </div>
 
                     <div>
