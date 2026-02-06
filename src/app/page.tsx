@@ -130,56 +130,59 @@ export default function HomePage() {
           <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
         </div>
 
-        <div className="relative z-10 text-center px-4 max-w-5xl mx-auto">
-          {/* Large Logo */}
-          <div className="mb-8">
+        <div className="relative z-10 px-4 max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-8 lg:gap-16">
+          {/* Logo on Left */}
+          <div className="flex-shrink-0">
             <Image
               src="/ellevate_logo.png"
               alt="Ellevate Fitness Studio"
-              width={3200}
-              height={960}
-              className="mx-auto h-[32rem] sm:h-[40rem] md:h-[48rem] w-auto invert brightness-100 drop-shadow-[0_0_30px_rgba(244,114,182,0.5)]"
+              width={1600}
+              height={480}
+              className="h-64 sm:h-80 md:h-96 lg:h-[32rem] w-auto invert brightness-100 drop-shadow-[0_0_30px_rgba(244,114,182,0.5)]"
               priority
             />
           </div>
 
-          <div className="mb-6 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-sm text-slate-300">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            Rezervacije otvorene za veljače 2026.
-          </div>
-
-          <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
-            <span className="gradient-text">Podignite</span> svoj fitness
-            <br />na višu razinu
-          </h1>
-
-          <p className="text-xl md:text-2xl text-slate-400 mb-10 max-w-2xl mx-auto">
-            Ekskluzivni grupni treninzi dizajnirani za žene koje žele više.
-            Snaga, energija, zajednica.
-          </p>
-
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button
-              onClick={() => setShowLogin(true)}
-              className="btn-primary text-lg px-8 py-4 group"
-            >
-              Započni sada
-              <span className="ml-2 group-hover:translate-x-1 transition-transform inline-block">→</span>
-            </button>
-            <a href="#blog" className="btn-secondary text-lg px-8 py-4">
-              Saznaj više
-            </a>
-          </div>
-
-          {/* Stats */}
-          <div className="mt-6 grid grid-cols-2 gap-8 max-w-sm mx-auto">
-            <div className="text-center">
-              <div className="text-3xl md:text-4xl font-bold gradient-text">500+</div>
-              <div className="text-sm text-slate-500 mt-1">Članica</div>
+          {/* Text Content on Right */}
+          <div className="text-center lg:text-left">
+            <div className="mb-6 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-sm text-slate-300">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              Rezervacije otvorene za veljače 2026.
             </div>
-            <div className="text-center">
-              <div className="text-3xl md:text-4xl font-bold gradient-text">98%</div>
-              <div className="text-sm text-slate-500 mt-1">Zadovoljstvo</div>
+
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
+              <span className="gradient-text">Podignite</span> svoj fitness
+              <br />na višu razinu
+            </h1>
+
+            <p className="text-lg sm:text-xl md:text-2xl text-slate-400 mb-10 max-w-2xl">
+              Ekskluzivni grupni treninzi dizajnirani za žene koje žele više.
+              Snaga, energija, zajednica.
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+              <button
+                onClick={() => setShowLogin(true)}
+                className="btn-primary text-lg px-8 py-4 group"
+              >
+                Započni sada
+                <span className="ml-2 group-hover:translate-x-1 transition-transform inline-block">→</span>
+              </button>
+              <a href="#blog" className="btn-secondary text-lg px-8 py-4">
+                Saznaj više
+              </a>
+            </div>
+
+            {/* Stats */}
+            <div className="mt-8 grid grid-cols-2 gap-8 max-w-sm mx-auto lg:mx-0">
+              <div className="text-center lg:text-left">
+                <div className="text-3xl md:text-4xl font-bold gradient-text">500+</div>
+                <div className="text-sm text-slate-500 mt-1">Članica</div>
+              </div>
+              <div className="text-center lg:text-left">
+                <div className="text-3xl md:text-4xl font-bold gradient-text">98%</div>
+                <div className="text-sm text-slate-500 mt-1">Zadovoljstvo</div>
+              </div>
             </div>
           </div>
         </div>
