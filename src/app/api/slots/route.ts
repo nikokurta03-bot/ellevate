@@ -91,8 +91,10 @@ export async function POST(request: NextRequest) {
 
         const createdSlots = [];
 
-        for (let day = 0; day < 5; day++) {
-            // Pon-Pet
+        // Only Monday (0), Wednesday (2), Friday (4) - skip Tuesday and Thursday
+        const trainingDays = [0, 2, 4];
+
+        for (const day of trainingDays) {
             const date = new Date(weekStart);
             date.setDate(date.getDate() + day);
 

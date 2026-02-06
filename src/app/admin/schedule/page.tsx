@@ -14,7 +14,8 @@ export default function AdminSchedulePage() {
 
     // 🚀 OPTIMIZACIJA: Memoizirani izračuni datuma
     const weekStart = useMemo(() => startOfWeek(addWeeks(new Date(), weekOffset), { weekStartsOn: 1 }), [weekOffset]);
-    const weekDays = useMemo(() => [...Array(5)].map((_, i) => addDays(weekStart, i)), [weekStart]);
+    // Only Monday (0), Wednesday (2), Friday (4) - skip Tuesday and Thursday
+    const weekDays = useMemo(() => [0, 2, 4].map((dayOffset) => addDays(weekStart, dayOffset)), [weekStart]);
     const timeRows = useMemo(() => ['09:00', '19:30', '20:30'], []);
 
     // 🚀 OPTIMIZACIJA: useCallback za stabilnu referencu
@@ -163,7 +164,7 @@ export default function AdminSchedulePage() {
                     <div className="hidden md:block overflow-x-auto">
                         <div className="min-w-[700px]">
                             {/* Header Days */}
-                            <div className="grid grid-cols-[80px_repeat(5,1fr)] border-b border-white/10 pb-4">
+                            <div className="grid grid-cols-[80px_repeat(3,1fr)] border-b border-white/10 pb-4">
                                 <div className="text-slate-500 text-sm font-medium">Vrijeme</div>
                                 {weekDays.map((day) => (
                                     <div key={day.toString()} className="text-center">
@@ -177,7 +178,7 @@ export default function AdminSchedulePage() {
 
                             {/* Grid Rows */}
                             {timeRows.map((time) => (
-                                <div key={time} className="grid grid-cols-[80px_repeat(5,1fr)] border-b border-white/5 py-4 items-center">
+                                <div key={time} className="grid grid-cols-[80px_repeat(3,1fr)] border-b border-white/5 py-4 items-center">
                                     <div className="text-base font-bold text-slate-300">{time}</div>
                                     {weekDays.map((day) => {
                                         const slotDateStr = format(day, 'yyyy-MM-dd');

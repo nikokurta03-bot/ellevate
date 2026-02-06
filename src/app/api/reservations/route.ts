@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { errorResponse, successResponse, isSlotFull, canCancelReservation } from '@/lib/helpers';
+import { errorResponse, successResponse, isSlotFull, canMakeReservation } from '@/lib/helpers';
 
 // GET /api/reservations - Dohvati rezervacije
 export async function GET(request: NextRequest) {
@@ -73,6 +73,11 @@ export async function POST(request: NextRequest) {
 
         if (slotDateTime < now) {
             return errorResponse('Ne možete rezervirati termin koji je već prošao');
+        }
+
+        // Check if reservation is at least 3 hours before training
+        if (!canMakeReservation(slot.date, slot.startTime)) {
+            return errorResponse('Prijava je moguća najkasnije 3 sata prije treninga');
         }
 
         // Check if slot is full

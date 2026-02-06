@@ -76,7 +76,7 @@ export async function isSlotFull(slotId: number): Promise<boolean> {
     return slot._count.reservations >= slot.maxCapacity;
 }
 
-// Check if user can cancel reservation (1 hour before)
+// Check if user can cancel or signup for reservation (3 hours before)
 export function canCancelReservation(slotDate: Date, startTime: string): boolean {
     const now = new Date();
     const [hours, minutes] = startTime.split(':').map(Number);
@@ -84,9 +84,14 @@ export function canCancelReservation(slotDate: Date, startTime: string): boolean
     const slotDateTime = new Date(slotDate);
     slotDateTime.setHours(hours, minutes, 0, 0);
 
-    const oneHourBefore = new Date(slotDateTime.getTime() - 60 * 60 * 1000);
+    const threeHoursBefore = new Date(slotDateTime.getTime() - 3 * 60 * 60 * 1000);
 
-    return now < oneHourBefore;
+    return now < threeHoursBefore;
+}
+
+// Check if user can make a reservation (3 hours before training)
+export function canMakeReservation(slotDate: Date, startTime: string): boolean {
+    return canCancelReservation(slotDate, startTime);
 }
 
 // Get day name in Croatian

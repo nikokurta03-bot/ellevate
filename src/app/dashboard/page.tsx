@@ -17,7 +17,8 @@ export default function UserDashboard() {
 
     // 🚀 OPTIMIZACIJA: Memoizirani izračuni datuma
     const weekStart = useMemo(() => startOfWeek(addWeeks(new Date(), weekOffset), { weekStartsOn: 1 }), [weekOffset]);
-    const weekDays = useMemo(() => [...Array(5)].map((_, i) => addDays(weekStart, i)), [weekStart]);
+    // Only Monday (0), Wednesday (2), Friday (4) - skip Tuesday and Thursday
+    const weekDays = useMemo(() => [0, 2, 4].map((dayOffset) => addDays(weekStart, dayOffset)), [weekStart]);
     const timeRows = useMemo(() => ['09:00', '19:30', '20:30'], []);
 
     // 🚀 OPTIMIZACIJA: useCallback za stabilnu referencu
@@ -112,7 +113,7 @@ export default function UserDashboard() {
                             <h1 className="text-2xl sm:text-4xl font-bold mb-2">Rezervirajte svoj termin</h1>
                             <p className="text-slate-400 text-sm sm:text-base max-w-lg">
                                 Odaberite željeni termin za trening. Maksimalno 8 osoba po grupi.
-                                Otkazivanje je moguće najkasnije 1 sat prije početka.
+                                Prijava i otkazivanje moguće najkasnije 3 sata prije početka.
                             </p>
                         </div>
 
