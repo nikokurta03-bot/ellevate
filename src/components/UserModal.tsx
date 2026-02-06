@@ -135,8 +135,8 @@ export default function UserModal({ isOpen, onClose, onSave, user }: UserModalPr
                     </div>
 
                     <div>
-                        <label className="block text-xs font-medium text-slate-400 mb-1">OIB</label>
-                        <input name="oib" value={formData.oib} onChange={handleChange} required maxLength={11} className="w-full bg-white/5 border border-white/10 p-2 rounded-lg" />
+                        <label className="block text-xs font-medium text-slate-400 mb-1">OIB (opcionalno)</label>
+                        <input name="oib" value={formData.oib} onChange={handleChange} maxLength={11} className="w-full bg-white/5 border border-white/10 p-2 rounded-lg" />
                     </div>
 
                     <div>

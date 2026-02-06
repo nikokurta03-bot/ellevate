@@ -44,8 +44,8 @@ export async function POST(request: NextRequest) {
     try {
         const body: CreateUserInput = await request.json();
 
-        // Validate required fields
-        if (!body.email || !body.password || !body.firstName || !body.lastName || !body.oib) {
+        // Validate required fields (OIB is now optional)
+        if (!body.email || !body.password || !body.firstName || !body.lastName) {
             return errorResponse('Sva obavezna polja moraju biti popunjena');
         }
 
@@ -55,9 +55,19 @@ export async function POST(request: NextRequest) {
             return errorResponse('Email adresa nije ispravna');
         }
 
-        // Validate OIB
-        if (!validateOIB(body.oib)) {
-            return errorResponse('OIB nije ispravan');
+        // Validate OIB only if provided
+        if (body.oib) {
+            if (!validateOIB(body.oib)) {
+                return errorResponse('OIB nije ispravan');
+            }
+
+            // Check if OIB already exists
+            const existingOIB = await prisma.user.findUnique({
+                where: { oib: body.oib },
+            });
+            if (existingOIB) {
+                return errorResponse('Korisnik s ovim OIB-om već postoji');
+            }
         }
 
         // Check if email already exists
@@ -66,14 +76,6 @@ export async function POST(request: NextRequest) {
         });
         if (existingEmail) {
             return errorResponse('Korisnik s ovom email adresom već postoji');
-        }
-
-        // Check if OIB already exists
-        const existingOIB = await prisma.user.findUnique({
-            where: { oib: body.oib },
-        });
-        if (existingOIB) {
-            return errorResponse('Korisnik s ovim OIB-om već postoji');
         }
 
         // Hash password
@@ -86,7 +88,7 @@ export async function POST(request: NextRequest) {
                 password: hashedPassword,
                 firstName: body.firstName,
                 lastName: body.lastName,
-                oib: body.oib,
+                oib: body.oib || '',
                 address: body.address || null,
                 dateOfBirth: body.dateOfBirth ? new Date(body.dateOfBirth) : null,
                 heightCm: body.heightCm || null,
