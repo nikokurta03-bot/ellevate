@@ -172,14 +172,10 @@ export default function HomePage() {
           </div>
 
           {/* Stats */}
-          <div className="mt-16 grid grid-cols-3 gap-8 max-w-lg mx-auto">
+          <div className="mt-6 grid grid-cols-2 gap-8 max-w-sm mx-auto">
             <div className="text-center">
               <div className="text-3xl md:text-4xl font-bold gradient-text">500+</div>
               <div className="text-sm text-slate-500 mt-1">Članica</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl md:text-4xl font-bold gradient-text">15</div>
-              <div className="text-sm text-slate-500 mt-1">Treninga tjedno</div>
             </div>
             <div className="text-center">
               <div className="text-3xl md:text-4xl font-bold gradient-text">98%</div>
