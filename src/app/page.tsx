@@ -138,7 +138,7 @@ export default function HomePage() {
               alt="Ellevate Fitness Studio"
               width={3200}
               height={960}
-              className="mx-auto h-[32rem] sm:h-[40rem] md:h-[48rem] w-auto brightness-125 contrast-110 drop-shadow-[0_0_30px_rgba(244,114,182,0.5)]"
+              className="mx-auto h-[32rem] sm:h-[40rem] md:h-[48rem] w-auto invert brightness-100 drop-shadow-[0_0_30px_rgba(244,114,182,0.5)]"
               priority
             />
           </div>
