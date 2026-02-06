@@ -136,9 +136,9 @@ export default function HomePage() {
             <Image
               src="/ellevate_logo.png"
               alt="Ellevate Fitness Studio"
-              width={1600}
-              height={480}
-              className="mx-auto h-64 sm:h-80 md:h-96 w-auto"
+              width={3200}
+              height={960}
+              className="mx-auto h-[32rem] sm:h-[40rem] md:h-[48rem] w-auto brightness-125 contrast-110 drop-shadow-[0_0_30px_rgba(244,114,182,0.5)]"
               priority
             />
           </div>
