@@ -174,11 +174,7 @@ export default function HomePage() {
             </div>
 
             {/* Stats */}
-            <div className="mt-8 grid grid-cols-2 gap-8 max-w-sm mx-auto lg:mx-0">
-              <div className="text-center lg:text-left">
-                <div className="text-3xl md:text-4xl font-bold gradient-text">500+</div>
-                <div className="text-sm text-slate-500 mt-1">Članica</div>
-              </div>
+            <div className="mt-8">
               <div className="text-center lg:text-left">
                 <div className="text-3xl md:text-4xl font-bold gradient-text">98%</div>
                 <div className="text-sm text-slate-500 mt-1">Zadovoljstvo</div>
