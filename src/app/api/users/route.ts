@@ -44,14 +44,17 @@ export async function POST(request: NextRequest) {
     try {
         const body: CreateUserInput = await request.json();
 
+        // Normalize email to lowercase
+        const email = body.email?.trim().toLowerCase();
+
         // Validate required fields (OIB is now optional)
-        if (!body.email || !body.password || !body.firstName || !body.lastName) {
+        if (!email || !body.password || !body.firstName || !body.lastName) {
             return errorResponse('Sva obavezna polja moraju biti popunjena');
         }
 
         // Validate email format
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(body.email)) {
+        if (!emailRegex.test(email)) {
             return errorResponse('Email adresa nije ispravna');
         }
 
@@ -72,7 +75,7 @@ export async function POST(request: NextRequest) {
 
         // Check if email already exists
         const existingEmail = await prisma.user.findUnique({
-            where: { email: body.email },
+            where: { email },
         });
         if (existingEmail) {
             return errorResponse('Korisnik s ovom email adresom već postoji');
@@ -84,11 +87,11 @@ export async function POST(request: NextRequest) {
         // Create user
         const user = await prisma.user.create({
             data: {
-                email: body.email,
+                email,
                 password: hashedPassword,
                 firstName: body.firstName,
                 lastName: body.lastName,
-                oib: body.oib || null,
+                oib: body.oib || '',
                 address: body.address || null,
                 dateOfBirth: body.dateOfBirth ? new Date(body.dateOfBirth) : null,
                 heightCm: body.heightCm || null,
