@@ -87,7 +87,7 @@ export default function AdminSchedulePage() {
                 </div>
                 <div className="text-sm text-slate-300 font-medium mb-2">Grupni trening</div>
                 <div className="text-xs text-slate-400">
-                    {slot.reservations?.map(r => r.user.firstName).join(', ') || 'Nema prijava'}
+                    {slot.reservations?.map(r => `${r.user.firstName} ${r.user.lastName}`).join(', ') || 'Nema prijava'}
                 </div>
             </div>
         );
@@ -201,7 +201,7 @@ export default function AdminSchedulePage() {
                                                             </span>
                                                         </div>
                                                         <div className="text-[10px] text-slate-400 truncate">
-                                                            {slot.reservations?.map(r => r.user.firstName).join(', ') || 'Nema prijava'}
+                                                            {slot.reservations?.map(r => `${r.user.firstName} ${r.user.lastName}`).join(', ') || 'Nema prijava'}
                                                         </div>
                                                     </div>
                                                 ) : (
