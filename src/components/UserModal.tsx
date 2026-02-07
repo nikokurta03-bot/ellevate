@@ -34,7 +34,7 @@ export default function UserModal({ isOpen, onClose, onSave, user }: UserModalPr
                 email: user.email,
                 firstName: user.firstName,
                 lastName: user.lastName,
-                oib: user.oib,
+                oib: user.oib || '',
                 role: user.role as any,
                 address: user.address || '',
                 dateOfBirth: user.dateOfBirth ? new Date(user.dateOfBirth).toISOString().split('T')[0] : '',
