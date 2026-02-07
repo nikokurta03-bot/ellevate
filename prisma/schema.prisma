@@ -18,7 +18,7 @@ model User {
   password        String    // hashed with bcrypt
   firstName       String
   lastName        String
-  oib             String    @unique
+  oib             String?   // Optional field
   address         String?
   dateOfBirth     DateTime?
   heightCm        Int?

@@ -78,7 +78,7 @@ export async function PUT(
             if (!validateOIB(body.oib)) {
                 return errorResponse('OIB nije ispravan');
             }
-            const oibExists = await prisma.user.findUnique({
+            const oibExists = await prisma.user.findFirst({
                 where: { oib: body.oib },
             });
             if (oibExists) {

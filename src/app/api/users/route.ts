@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
             }
 
             // Check if OIB already exists
-            const existingOIB = await prisma.user.findUnique({
+            const existingOIB = await prisma.user.findFirst({
                 where: { oib: body.oib },
             });
             if (existingOIB) {
@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
                 password: hashedPassword,
                 firstName: body.firstName,
                 lastName: body.lastName,
-                oib: body.oib || '',
+                oib: body.oib || null,
                 address: body.address || null,
                 dateOfBirth: body.dateOfBirth ? new Date(body.dateOfBirth) : null,
                 heightCm: body.heightCm || null,
