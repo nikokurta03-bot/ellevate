@@ -172,14 +172,6 @@ export default function HomePage() {
                 Saznaj više
               </a>
             </div>
-
-            {/* Stats */}
-            <div className="mt-8">
-              <div className="text-center lg:text-left">
-                <div className="text-3xl md:text-4xl font-bold gradient-text">98%</div>
-                <div className="text-sm text-slate-500 mt-1">Zadovoljstvo</div>
-              </div>
-            </div>
           </div>
         </div>
 
