@@ -25,7 +25,6 @@ async function main() {
             password: hashedPassword,
             firstName: 'Admin',
             lastName: 'Mateazadar',
-            oib: '00000000000',
             role: 'admin',
             address: 'Ulica primjera 1, Zadar',
         },
