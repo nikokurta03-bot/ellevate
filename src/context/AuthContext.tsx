@@ -33,9 +33,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         localStorage.setItem('ellevate_user', JSON.stringify(userData));
     };
 
-    const logout = () => {
+    const logout = async () => {
         setUser(null);
         localStorage.removeItem('ellevate_user');
+        try {
+            await fetch('/api/auth/logout', { method: 'POST' });
+        } catch (e) {
+            // Cookie cleanup is best-effort
+        }
     };
 
     return (

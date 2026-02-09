@@ -1,9 +1,12 @@
 import { NextRequest } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { errorResponse, successResponse, isSlotFull, canMakeReservation } from '@/lib/helpers';
+import { requireAuth } from '@/lib/auth';
 
-// GET /api/reservations - Dohvati rezervacije
+// GET /api/reservations - Dohvati rezervacije (requires auth)
 export async function GET(request: NextRequest) {
+    const { error, session } = await requireAuth(request);
+    if (error) return error;
     try {
         const { searchParams } = new URL(request.url);
         const userId = searchParams.get('userId');
@@ -12,7 +15,12 @@ export async function GET(request: NextRequest) {
 
         const where: any = {};
 
-        if (userId) where.userId = parseInt(userId);
+        // If not admin, can only see own reservations
+        if (session!.role !== 'admin') {
+            where.userId = session!.userId;
+        } else if (userId) {
+            where.userId = parseInt(userId);
+        }
         if (slotId) where.slotId = parseInt(slotId);
         if (status) where.status = status;
 
@@ -39,11 +47,19 @@ export async function GET(request: NextRequest) {
     }
 }
 
-// POST /api/reservations - Kreiraj rezervaciju
+// POST /api/reservations - Kreiraj rezervaciju (requires auth)
 export async function POST(request: NextRequest) {
+    const { error, session } = await requireAuth(request);
+    if (error) return error;
+
     try {
         const body = await request.json();
         const { userId, slotId } = body;
+
+        // If not admin, can only create for self
+        if (session!.role !== 'admin' && userId !== session!.userId) {
+            return errorResponse('Možete kreirati rezervacije samo za sebe', 403);
+        }
 
         if (!userId || !slotId) {
             return errorResponse('userId i slotId su obavezni');

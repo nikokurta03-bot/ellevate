@@ -1,10 +1,13 @@
 import { NextRequest } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { errorResponse, successResponse } from '@/lib/helpers';
+import { requireAuth, requireAdmin } from '@/lib/auth';
 import { startOfWeek, endOfWeek, addWeeks, format } from 'date-fns';
 
-// GET /api/slots - Dohvati termine
+// GET /api/slots - Dohvati termine (requires auth)
 export async function GET(request: NextRequest) {
+    const { error } = await requireAuth(request);
+    if (error) return error;
     try {
         const { searchParams } = new URL(request.url);
         const weekOffset = parseInt(searchParams.get('week') || '0');
@@ -74,8 +77,10 @@ export async function GET(request: NextRequest) {
     }
 }
 
-// POST /api/slots - Generiraj termine za tjedan
+// POST /api/slots - Generiraj termine za tjedan (admin only)
 export async function POST(request: NextRequest) {
+    const { error } = await requireAdmin(request);
+    if (error) return error;
     try {
         const body = await request.json();
         const { weekOffset = 0 } = body;

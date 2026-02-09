@@ -1,13 +1,17 @@
 import { NextRequest } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { excludePassword, errorResponse, successResponse, hashPassword, validateOIB } from '@/lib/helpers';
+import { requireAdmin } from '@/lib/auth';
 import { UpdateUserInput } from '@/types';
 
-// GET /api/users/[id] - Dohvati jednog korisnika
+// GET /api/users/[id] - Dohvati jednog korisnika (admin only)
 export async function GET(
     request: NextRequest,
     { params }: { params: Promise<{ id: string }> }
 ) {
+    const { error } = await requireAdmin(request);
+    if (error) return error;
+
     try {
         const { id } = await params;
         const userId = parseInt(id);
@@ -40,11 +44,14 @@ export async function GET(
     }
 }
 
-// PUT /api/users/[id] - Ažuriraj korisnika
+// PUT /api/users/[id] - Ažuriraj korisnika (admin only)
 export async function PUT(
     request: NextRequest,
     { params }: { params: Promise<{ id: string }> }
 ) {
+    const { error } = await requireAdmin(request);
+    if (error) return error;
+
     try {
         const { id } = await params;
         const userId = parseInt(id);
@@ -118,11 +125,14 @@ export async function PUT(
     }
 }
 
-// DELETE /api/users/[id] - Obriši korisnika
+// DELETE /api/users/[id] - Obriši korisnika (admin only)
 export async function DELETE(
     request: NextRequest,
     { params }: { params: Promise<{ id: string }> }
 ) {
+    const { error } = await requireAdmin(request);
+    if (error) return error;
+
     try {
         const { id } = await params;
         const userId = parseInt(id);

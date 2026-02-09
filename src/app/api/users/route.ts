@@ -1,10 +1,13 @@
 import { NextRequest } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { excludePassword, errorResponse, successResponse, hashPassword, validateOIB } from '@/lib/helpers';
+import { requireAdmin } from '@/lib/auth';
 import { CreateUserInput } from '@/types';
 
-// GET /api/users - Dohvati sve korisnike
+// GET /api/users - Dohvati sve korisnike (admin only)
 export async function GET(request: NextRequest) {
+    const { error } = await requireAdmin(request);
+    if (error) return error;
     try {
         const { searchParams } = new URL(request.url);
         const role = searchParams.get('role');
@@ -39,8 +42,11 @@ export async function GET(request: NextRequest) {
     }
 }
 
-// POST /api/users - Kreiraj novog korisnika
+// POST /api/users - Kreiraj novog korisnika (admin only)
 export async function POST(request: NextRequest) {
+    const { error } = await requireAdmin(request);
+    if (error) return error;
+
     try {
         const body: CreateUserInput = await request.json();
 

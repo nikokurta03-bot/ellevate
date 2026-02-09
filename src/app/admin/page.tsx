@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import { useRouter } from 'next/navigation';
 import AdminNav from '@/components/AdminNav';
 import { StatCardSkeleton, SlotCardSkeleton } from '@/components/Skeleton';
 import { ApiResponse, TrainingSlotWithCount } from '@/types';
@@ -8,6 +9,7 @@ import { format } from 'date-fns';
 import { hr } from 'date-fns/locale';
 
 export default function AdminDashboard() {
+    const router = useRouter();
     const [slots, setSlots] = useState<TrainingSlotWithCount[]>([]);
     const [userCount, setUserCount] = useState(0);
     const [reservationCount, setReservationCount] = useState(0);
@@ -128,7 +130,10 @@ export default function AdminDashboard() {
                                         </div>
                                     </div>
 
-                                    <button className="btn-secondary w-full text-sm">
+                                    <button
+                                        onClick={() => router.push('/admin/schedule')}
+                                        className="btn-secondary w-full text-sm"
+                                    >
                                         Pogledaj polaznike
                                     </button>
                                 </div>

@@ -1,6 +1,7 @@
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { errorResponse, successResponse, verifyPassword, excludePassword } from '@/lib/helpers';
+import { errorResponse, verifyPassword, excludePassword } from '@/lib/helpers';
+import { signToken, COOKIE_NAME } from '@/lib/auth';
 
 // POST /api/auth/login - Prijava korisnika
 export async function POST(request: NextRequest) {
@@ -29,13 +30,34 @@ export async function POST(request: NextRequest) {
             return errorResponse('Pogrešan email ili lozinka', 401);
         }
 
-        // Return user without password
-        return successResponse({
-            user: excludePassword(user),
-            message: 'Uspješna prijava',
+        // Sign JWT token
+        const token = await signToken(user.id, user.role);
+
+        // Build response with cookie
+        const response = NextResponse.json(
+            {
+                success: true,
+                data: {
+                    user: excludePassword(user),
+                    message: 'Uspješna prijava',
+                },
+            },
+            { status: 200 }
+        );
+
+        // Set HTTP-only cookie
+        response.cookies.set(COOKIE_NAME, token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+            path: '/',
+            maxAge: 60 * 60 * 24 * 7, // 7 days
         });
+
+        return response;
     } catch (error: any) {
         console.error('Error logging in:', error);
         return errorResponse(`Greška pri prijavi: ${error.message || 'Nepoznata greška'}`, 500);
     }
 }
+
