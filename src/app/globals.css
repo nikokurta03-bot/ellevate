@@ -28,6 +28,22 @@ html {
   will-change: opacity, transform;
 }
 
+@keyframes slide-in-right {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-in-right {
+  animation: slide-in-right 0.3s ease-out;
+}
+
 @utility glass {
   background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(12px);

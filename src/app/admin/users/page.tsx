@@ -4,8 +4,10 @@ import React, { useEffect, useState, useCallback } from 'react';
 import AdminNav from '@/components/AdminNav';
 import UserModal from '@/components/UserModal';
 import { ApiResponse, UserWithoutPassword } from '@/types';
+import { useToast } from '@/components/Toasts';
 
-export default function UsersAdminPage() {
+export default function UsersPage() {
+    const { success, error } = useToast();
     const [users, setUsers] = useState<UserWithoutPassword[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -55,10 +57,11 @@ export default function UsersAdminPage() {
             const response = await fetch(`/api/users/${id}`, { method: 'DELETE' });
             const result = await response.json();
             if (result.success) {
+                success('Korisnik obrisan');
                 fetchUsers();
             }
         } catch (err) {
-            alert('Greška pri brisanju korisnika');
+            error('Greška pri brisanju korisnika');
         }
     };
 

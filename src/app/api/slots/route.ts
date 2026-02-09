@@ -94,42 +94,38 @@ export async function POST(request: NextRequest) {
         const today = new Date();
         const weekStart = startOfWeek(addWeeks(today, weekOffset), { weekStartsOn: 1 });
 
-        const createdSlots = [];
-
         // Only Monday (0), Wednesday (2), Friday (4) - skip Tuesday and Thursday
         const trainingDays = [0, 2, 4];
+        const slotsToCreate = [];
 
         for (const day of trainingDays) {
             const date = new Date(weekStart);
             date.setDate(date.getDate() + day);
+            const dateStr = format(date, 'yyyy-MM-dd');
 
             for (const time of TRAINING_TIMES) {
-                const existingSlot = await prisma.trainingSlot.findUnique({
-                    where: {
-                        date_startTime: {
-                            date: new Date(format(date, 'yyyy-MM-dd')),
-                            startTime: time.start,
-                        },
-                    },
+                slotsToCreate.push({
+                    date: new Date(dateStr),
+                    startTime: time.start,
+                    endTime: time.end,
+                    maxCapacity: 8,
                 });
-
-                if (!existingSlot) {
-                    const slot = await prisma.trainingSlot.create({
-                        data: {
-                            date: new Date(format(date, 'yyyy-MM-dd')),
-                            startTime: time.start,
-                            endTime: time.end,
-                            maxCapacity: 8,
-                        },
-                    });
-                    createdSlots.push(slot);
-                }
             }
         }
 
+        // 🚀 OPTIMIZACIJA: Batch create using createMany (only creates what doesn't exist)
+        // Since sqlite/pg might not support createMany skipDuplicates effectively everywhere or differently
+        // we'll filter them first or just use a loop with create if needed, but createMany is faster.
+        // Actually for pg we can use createMany with skipDuplicates: true
+
+        const result = await prisma.trainingSlot.createMany({
+            data: slotsToCreate,
+            skipDuplicates: true,
+        });
+
         return successResponse({
-            message: `Kreirano ${createdSlots.length} novih termina`,
-            slots: createdSlots,
+            message: `Uspješno obrađeno ${slotsToCreate.length} termina.`,
+            count: result.count,
         }, 201);
     } catch (error) {
         console.error('Error creating slots:', error);

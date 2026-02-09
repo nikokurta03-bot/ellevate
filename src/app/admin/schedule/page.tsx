@@ -5,8 +5,10 @@ import AdminNav from '@/components/AdminNav';
 import { ApiResponse, TrainingSlotWithCount } from '@/types';
 import { format, startOfWeek, addDays, addWeeks } from 'date-fns';
 import { hr } from 'date-fns/locale';
+import { useToast } from '@/components/Toasts';
 
 export default function AdminSchedulePage() {
+    const { success, error } = useToast();
     const [slots, setSlots] = useState<TrainingSlotWithCount[]>([]);
     const [weekOffset, setWeekOffset] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
@@ -50,13 +52,13 @@ export default function AdminSchedulePage() {
             });
             const result = await response.json();
             if (result.success) {
-                alert(result.data.message);
+                success(result.data.message);
                 fetchSlots();
             }
         } catch (err) {
-            alert('Greška pri generiranju termina');
+            error('Greška pri generiranju termina');
         }
-    }, [weekOffset, fetchSlots]);
+    }, [weekOffset, fetchSlots, success, error]);
 
     // Mobile: render a single selected day's slots
     const renderMobileSlotCard = (slot: TrainingSlotWithCount | undefined, time: string, day: Date) => {
@@ -127,7 +129,7 @@ export default function AdminSchedulePage() {
                     {/* Mobile: Day Tabs + Cards */}
                     <div className="md:hidden">
                         {/* Day Selector Tabs */}
-                        <div className="flex gap-1 mb-6 overflow-x-auto pb-2 -mx-2 px-2">
+                        <div className="flex gap-1 mb-6 overflow-x-auto pb-2 -mx-2 px-2 sticky top-[4.5rem] bg-slate-900/95 backdrop-blur-md z-20 py-2">
                             {weekDays.map((day, index) => (
                                 <button
                                     key={day.toString()}
@@ -164,7 +166,7 @@ export default function AdminSchedulePage() {
                     <div className="hidden md:block overflow-x-auto">
                         <div className="min-w-[700px]">
                             {/* Header Days */}
-                            <div className="grid grid-cols-[80px_repeat(3,1fr)] border-b border-white/10 pb-4">
+                            <div className="grid grid-cols-[80px_repeat(3,1fr)] border-b border-white/10 pb-4 sticky top-0 bg-slate-900/95 backdrop-blur-md z-20 pt-4">
                                 <div className="text-slate-500 text-sm font-medium">Vrijeme</div>
                                 {weekDays.map((day) => (
                                     <div key={day.toString()} className="text-center">

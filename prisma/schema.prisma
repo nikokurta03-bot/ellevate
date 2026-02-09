@@ -29,6 +29,8 @@ model User {
   updatedAt       DateTime  @updatedAt
 
   reservations Reservation[]
+
+  @@index([role])
 }
 
 // Termini treninga
@@ -43,6 +45,7 @@ model TrainingSlot {
   reservations Reservation[]
 
   @@unique([date, startTime]) // jedan termin po datumu i vremenu
+  @@index([date])
 }
 
 // Rezervacije
@@ -58,4 +61,5 @@ model Reservation {
   slot TrainingSlot @relation(fields: [slotId], references: [id], onDelete: Cascade)
 
   @@unique([userId, slotId]) // korisnik može imati samo jednu rezervaciju po terminu
+  @@index([status])
 }

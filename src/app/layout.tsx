@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
+import { ToastProvider } from "@/components/Toasts";
 import RouteGuard from "@/components/RouteGuard";
 
 // 🚀 OPTIMIZACIJA: display swap sprječava FOIT (Flash of Invisible Text)
@@ -12,8 +13,25 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Ellevate - Rezervacije Grupnih Treninga",
-  description: "SaaS za jednostavno upravljanje rezervacijama treninga",
+  title: {
+    default: "Ellevate - Rezervacije Grupnih Treninga",
+    template: "%s | Ellevate"
+  },
+  description: "Ekskluzivni studio za treninge snage i oblikovanja tijela. Jednostavno upravljanje uslugama i rezervacijama.",
+  keywords: ["trening", "fitness", "rezervacije", "snaga", "oblikovanje tijela"],
+  openGraph: {
+    title: "Ellevate Fitness Studio",
+    description: "SaaS za jednostavno upravljanje rezervacijama treninga",
+    url: "https://www.ellevate.hr",
+    siteName: "Ellevate",
+    locale: "hr_HR",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Ellevate Fitness Studio",
+    description: "SaaS za jednostavno upravljanje rezervacijama treninga",
+  },
 };
 
 export default function RootLayout({
@@ -25,9 +43,11 @@ export default function RootLayout({
     <html lang="hr">
       <body className={`${inter.className} min-h-screen gradient-bg`}>
         <AuthProvider>
-          <RouteGuard>
-            {children}
-          </RouteGuard>
+          <ToastProvider>
+            <RouteGuard>
+              {children}
+            </RouteGuard>
+          </ToastProvider>
         </AuthProvider>
       </body>
     </html>

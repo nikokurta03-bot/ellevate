@@ -4,11 +4,13 @@ import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import UserNav from '@/components/UserNav';
 import { useAuth } from '@/context/AuthContext';
 import { ApiResponse, TrainingSlotWithCount } from '@/types';
-import { format, startOfWeek, addDays, addWeeks } from 'date-fns';
+import { format, startOfWeek, addDays, addWeeks, isAfter, isBefore, addHours } from 'date-fns';
 import { hr } from 'date-fns/locale';
+import { useToast } from '@/components/Toasts';
 
-export default function UserDashboard() {
+export default function Dashboard() {
     const { user } = useAuth();
+    const { success, error } = useToast();
     const [slots, setSlots] = useState<TrainingSlotWithCount[]>([]);
     const [userReservations, setUserReservations] = useState<number[]>([]);
     const [weekOffset, setWeekOffset] = useState(0);
@@ -76,9 +78,10 @@ export default function UserDashboard() {
                     const cancelResult = await cancelRes.json();
 
                     if (cancelResult.success) {
+                        success('Trening otkazan');
                         fetchData();
                     } else {
-                        alert(cancelResult.error);
+                        error(cancelResult.error || 'Greška pri otkazivanju');
                     }
                 }
             } else {
@@ -90,13 +93,14 @@ export default function UserDashboard() {
                 const bookResult = await bookRes.json();
 
                 if (bookResult.success) {
+                    success('Trening rezerviran');
                     fetchData();
                 } else {
-                    alert(bookResult.error);
+                    error(bookResult.error || 'Greška pri rezervaciji');
                 }
             }
         } catch (err) {
-            alert('Došlo je do greške.');
+            error('Došlo je do greške.');
         } finally {
             setActionLoading(null);
         }

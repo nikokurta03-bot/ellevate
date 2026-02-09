@@ -6,9 +6,11 @@ import { useAuth } from '@/context/AuthContext';
 import { ApiResponse, ReservationWithDetails } from '@/types';
 import { format } from 'date-fns';
 import { hr } from 'date-fns/locale';
+import { useToast } from '@/components/Toasts';
 
 export default function MyReservationsPage() {
     const { user } = useAuth();
+    const { success, error } = useToast();
     const [reservations, setReservations] = useState<ReservationWithDetails[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
@@ -37,14 +39,16 @@ export default function MyReservationsPage() {
 
         try {
             const response = await fetch(`/api/reservations/${id}`, { method: 'DELETE' });
-            const result = await response.json();
-            if (result.success) {
-                fetchReservations();
-            } else {
-                alert(result.error);
+            const result: ApiResponse<any> = await response.json();
+            if (!result.success) {
+                error(result.error || 'Greška pri otkazivanju');
+                return;
             }
+
+            success('Rezervacija otkazana');
+            fetchReservations();
         } catch (err) {
-            alert('Greška pri otkazivanju');
+            error('Greška pri otkazivanju');
         }
     };
 
