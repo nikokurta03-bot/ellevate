@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import AdminNav from '@/components/AdminNav';
 import UserModal from '@/components/UserModal';
 import { ApiResponse, UserWithoutPassword } from '@/types';
@@ -11,11 +11,18 @@ export default function UsersAdminPage() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedUser, setSelectedUser] = useState<UserWithoutPassword | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
+    const [debouncedSearch, setDebouncedSearch] = useState('');
 
-    const fetchUsers = async () => {
+    // Debounce search input
+    useEffect(() => {
+        const timer = setTimeout(() => setDebouncedSearch(searchTerm), 300);
+        return () => clearTimeout(timer);
+    }, [searchTerm]);
+
+    const fetchUsers = useCallback(async () => {
         setIsLoading(true);
         try {
-            const response = await fetch(`/api/users${searchTerm ? `?search=${searchTerm}` : ''}`);
+            const response = await fetch(`/api/users${debouncedSearch ? `?search=${debouncedSearch}` : ''}`);
             const result: ApiResponse<UserWithoutPassword[]> = await response.json();
             if (result.success) {
                 setUsers(result.data);
@@ -25,11 +32,11 @@ export default function UsersAdminPage() {
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [debouncedSearch]);
 
     useEffect(() => {
         fetchUsers();
-    }, [searchTerm]);
+    }, [fetchUsers]);
 
     const handleEdit = (user: UserWithoutPassword) => {
         setSelectedUser(user);

@@ -59,7 +59,11 @@ export default function MyReservationsPage() {
                 </header>
 
                 <div className="space-y-4">
-                    {reservations.length > 0 ? (
+                    {isLoading ? (
+                        <div className="glass-card p-12 text-center">
+                            <div className="text-lg font-bold animate-pulse gradient-text">Učitavanje rezervacija...</div>
+                        </div>
+                    ) : reservations.length > 0 ? (
                         reservations.map((res) => (
                             <div key={res.id} className={`glass-card flex flex-col md:flex-row justify-between items-center gap-6 ${res.status === 'cancelled' ? 'opacity-50 grayscale' : ''
                                 }`}>
@@ -100,7 +104,7 @@ export default function MyReservationsPage() {
                         ))
                     ) : (
                         <div className="glass-card p-12 text-center text-slate-500">
-                            {isLoading ? 'Učitavanje rezervacija...' : 'Nemate aktivnih rezervacija.'}
+                            Nemate aktivnih rezervacija.
                         </div>
                     )}
                 </div>

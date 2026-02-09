@@ -138,7 +138,7 @@ export default function UserDashboard() {
                 </header>
 
                 {/* Mobile: Vertical list layout, Desktop: 5-column grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 sm:gap-6 lg:gap-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
                     {weekDays.map((day) => (
                         <div key={day.toString()} className="space-y-3 sm:space-y-6">
                             <div className="text-center p-3 sm:p-4 bg-white/5 rounded-xl sm:rounded-2xl border border-white/10 sm:sticky sm:top-24 z-10 backdrop-blur-md">
@@ -178,7 +178,7 @@ export default function UserDashboard() {
                                                             <span
                                                                 key={res.id}
                                                                 className={`text-[10px] px-2 py-0.5 rounded-full ${user && res.user.id === user.id
-                                                                    ? 'bg-pink-300/30 text-indigo-300 font-semibold'
+                                                                    ? 'bg-pink-300/30 text-pink-300 font-semibold'
                                                                     : 'bg-white/5 text-slate-400'
                                                                     }`}
                                                             >

@@ -20,6 +20,14 @@ body {
   overflow-x: hidden;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
+.animate-fade-in {
+  will-change: opacity, transform;
+}
+
 @utility glass {
   background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(12px);

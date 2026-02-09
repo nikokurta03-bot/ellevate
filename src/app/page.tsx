@@ -136,8 +136,8 @@ export default function HomePage() {
             <Image
               src="/ellevate_logo.png"
               alt="Ellevate Fitness Studio"
-              width={1600}
-              height={480}
+              width={800}
+              height={240}
               className="h-64 sm:h-80 md:h-96 lg:h-[32rem] w-auto invert brightness-100 drop-shadow-[0_0_30px_rgba(244,114,182,0.5)]"
               priority
             />
@@ -209,6 +209,7 @@ export default function HomePage() {
                     src={article.image}
                     alt={article.title}
                     fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     className="object-cover group-hover:scale-110 transition-transform duration-500"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent" />
