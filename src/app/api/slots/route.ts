@@ -82,7 +82,7 @@ export async function POST(request: NextRequest) {
 
         const TRAINING_TIMES = [
             { start: '09:00', end: '10:00' },
-            { start: '19:30', end: '20:30' },
+            { start: '19:15', end: '20:15' },
             { start: '20:30', end: '21:30' },
         ];
 
