@@ -24,6 +24,29 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Accessibility: focus-visible for keyboard navigation */
+:focus-visible {
+  outline: 2px solid #f9a8d4;
+  outline-offset: 2px;
+}
+
+/* Skip to content link (screen readers) */
+.skip-to-content {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: #f472b6;
+  color: #111;
+  padding: 8px 16px;
+  z-index: 100;
+  font-weight: bold;
+  border-radius: 0 0 8px 0;
+}
+
+.skip-to-content:focus {
+  top: 0;
+}
+
 .animate-fade-in {
   will-change: opacity, transform;
 }

@@ -2,12 +2,15 @@ import { NextRequest } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { errorResponse, successResponse, canCancelReservation } from '@/lib/helpers';
 import { requireAuth } from '@/lib/auth';
+import { validateOrigin } from '@/lib/csrf';
 
 // DELETE /api/reservations/[id] - Otkaži rezervaciju (requires auth)
 export async function DELETE(
     request: NextRequest,
     { params }: { params: Promise<{ id: string }> }
 ) {
+    const originError = validateOrigin(request);
+    if (originError) return originError;
     const { error, session } = await requireAuth(request);
     if (error) return error;
     try {

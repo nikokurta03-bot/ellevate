@@ -2,16 +2,47 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { errorResponse, verifyPassword, excludePassword } from '@/lib/helpers';
 import { signToken, COOKIE_NAME } from '@/lib/auth';
+import { validateOrigin } from '@/lib/csrf';
+
+// In-memory rate limiting
+const loginAttempts = new Map<string, { count: number; firstAttempt: number }>();
+const MAX_ATTEMPTS = 5;
+const WINDOW_MS = 15 * 60 * 1000; // 15 minutes
+
+function isRateLimited(email: string): boolean {
+    const now = Date.now();
+    const record = loginAttempts.get(email);
+    if (!record) {
+        loginAttempts.set(email, { count: 1, firstAttempt: now });
+        return false;
+    }
+    if (now - record.firstAttempt > WINDOW_MS) {
+        loginAttempts.set(email, { count: 1, firstAttempt: now });
+        return false;
+    }
+    record.count++;
+    return record.count > MAX_ATTEMPTS;
+}
 
 // POST /api/auth/login - Prijava korisnika
 export async function POST(request: NextRequest) {
     try {
+        const originError = validateOrigin(request);
+        if (originError) return originError;
+
         const body = await request.json();
         const email = body.email?.trim().toLowerCase();
         const password = body.password;
 
         if (!email || !password) {
             return errorResponse('Email i lozinka su obavezni');
+        }
+
+        if (isRateLimited(email)) {
+            return NextResponse.json(
+                { success: false, error: 'Previše pokušaja prijave. Pokušajte ponovno za 15 minuta.' },
+                { status: 429 }
+            );
         }
 
         // Find user by email

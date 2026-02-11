@@ -2,9 +2,11 @@ import { SignJWT, jwtVerify } from 'jose';
 import { NextRequest } from 'next/server';
 import { errorResponse } from './helpers';
 
-const JWT_SECRET = new TextEncoder().encode(
-    process.env.JWT_SECRET || 'ellevate-default-secret-change-in-production-2026'
-);
+function getJwtSecret(): Uint8Array {
+    const secret = process.env.JWT_SECRET;
+    if (!secret) throw new Error('JWT_SECRET environment variable is required');
+    return new TextEncoder().encode(secret);
+}
 
 const COOKIE_NAME = 'ellevate_token';
 
@@ -19,13 +21,13 @@ export async function signToken(userId: number, role: string): Promise<string> {
         .setProtectedHeader({ alg: 'HS256' })
         .setIssuedAt()
         .setExpirationTime('7d')
-        .sign(JWT_SECRET);
+        .sign(getJwtSecret());
 }
 
 // Verify a JWT token
 export async function verifyToken(token: string): Promise<SessionPayload | null> {
     try {
-        const { payload } = await jwtVerify(token, JWT_SECRET);
+        const { payload } = await jwtVerify(token, getJwtSecret());
         return payload as unknown as SessionPayload;
     } catch {
         return null;

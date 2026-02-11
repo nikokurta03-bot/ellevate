@@ -6,54 +6,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 import { ApiResponse } from '@/types';
-
-const blogArticles = [
-  {
-    id: 1,
-    slug: 'grupni-treninzi',
-    title: 'Zašto su grupni treninzi učinkovitiji?',
-    excerpt: 'Otkrijte kako zajednička energija i motivacija grupe može transformirati vaše fitness rezultate i učiniti vježbanje zabavnijim.',
-    image: '/blog/group-training.png',
-    readTime: '5 min',
-    category: 'Motivacija',
-  },
-  {
-    id: 2,
-    slug: 'trening-snage',
-    title: 'Osnove treninga snage za žene',
-    excerpt: 'Razbijamo mitove o treningu snage i pokazujemo kako pravilno dizanje utega može oblikovati vaše tijelo.',
-    image: '/blog/strength-training.png',
-    readTime: '7 min',
-    category: 'Snaga',
-  },
-  {
-    id: 3,
-    slug: 'hiit-vs-kardio',
-    title: 'HIIT vs. Kardio: Što je bolje za vas?',
-    excerpt: 'Usporedba intenzivnog intervalnog treninga i tradicionalnog kardija - pronađite što odgovara vašim ciljevima.',
-    image: '/blog/cardio-workout.png',
-    readTime: '6 min',
-    category: 'Kardio',
-  },
-  {
-    id: 4,
-    slug: 'istezanje-fleksibilnost',
-    title: 'Važnost istezanja i fleksibilnosti',
-    excerpt: 'Naučite zašto je fleksibilnost ključna za prevenciju ozljeda i kako ju poboljšati kroz svakodnevne vježbe.',
-    image: '/blog/stretching-yoga.png',
-    readTime: '4 min',
-    category: 'Wellness',
-  },
-  {
-    id: 5,
-    slug: 'zdrave-navike',
-    title: 'Zdrave navike za aktivni životni stil',
-    excerpt: 'Praktični savjeti za održavanje energije, hidrataciju i oporavak koji će unaprijediti vaše treninge.',
-    image: '/blog/healthy-lifestyle.png',
-    readTime: '5 min',
-    category: 'Lifestyle',
-  },
-];
+import { blogArticles } from '@/data/blog-articles';
 
 export default function HomePage() {
   const [email, setEmail] = useState('');
@@ -183,6 +136,60 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* How It Works */}
+      <section className="py-24 px-4">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <span className="text-pink-300 font-semibold text-sm uppercase tracking-wider">Jednostavno</span>
+            <h2 className="text-4xl md:text-5xl font-bold mt-2 mb-4">
+              Kako <span className="gradient-text">funkcionira</span>?
+            </h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              { step: '01', icon: '📝', title: 'Registriraj se', desc: 'Kreirajte svoj račun u par klikova i pristupite sustavu rezervacija.' },
+              { step: '02', icon: '📅', title: 'Odaberi termin', desc: 'Pregledajte tjedni raspored i rezervirajte termin koji vam odgovara.' },
+              { step: '03', icon: '💪', title: 'Dođi na trening', desc: 'Pojavite se, dajte sve od sebe i uživajte u energiji grupe!' },
+            ].map((item, i) => (
+              <div key={i} className="glass-card text-center group">
+                <div className="text-5xl mb-4">{item.icon}</div>
+                <div className="text-pink-300 text-xs font-bold uppercase tracking-widest mb-2">Korak {item.step}</div>
+                <h3 className="text-xl font-bold mb-2">{item.title}</h3>
+                <p className="text-slate-400 text-sm">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials */}
+      <section className="py-24 px-4 bg-white/[0.02]">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <span className="text-pink-300 font-semibold text-sm uppercase tracking-wider">Iskustva</span>
+            <h2 className="text-4xl md:text-5xl font-bold mt-2 mb-4">
+              Što kažu naše <span className="gradient-text">članice</span>?
+            </h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              { name: 'Ana M.', text: 'Ellevate treninzi su mi potpuno promijenili rutinu. Grupna energija je nevjerojatna — uvijek se veselim sljedećem terminu!', tag: 'Članica 6 mjeseci' },
+              { name: 'Petra K.', text: 'Konačno sam pronašla trening koji me motivira. Trenerice su stručne, atmosfera je fantastična, a rezultati vidljivi već nakon mjesec dana.', tag: 'Članica 1 godinu' },
+              { name: 'Ivana S.', text: 'Rezervacijski sustav je super jednostavan. Odaberem termin, dođem i uživam. Preporuka svima koje traže kvalitetan grupni trening!', tag: 'Članica 3 mjeseca' },
+            ].map((t, i) => (
+              <div key={i} className="glass-card">
+                <div className="text-pink-300 text-2xl mb-3">★★★★★</div>
+                <p className="text-slate-300 text-sm mb-4 italic">&ldquo;{t.text}&rdquo;</p>
+                <div className="border-t border-white/10 pt-3">
+                  <p className="font-bold text-sm">{t.name}</p>
+                  <p className="text-slate-500 text-xs">{t.tag}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Blog Section */}
       <section id="blog" className="py-24 px-4">
         <div className="max-w-7xl mx-auto">
@@ -261,23 +268,34 @@ export default function HomePage() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-white/10 py-8 px-4">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
-          <div className="flex items-center">
-            <Image
-              src="/ellevate_logo.png"
-              alt="Ellevate"
-              width={100}
-              height={30}
-              className="h-8 w-auto"
-            />
+      <footer className="border-t border-white/10 py-12 px-4">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+            <div>
+              <Image src="/ellevate_logo.png" alt="Ellevate" width={120} height={36} className="h-8 w-auto mb-4" />
+              <p className="text-slate-500 text-sm">Ekskluzivni studio za grupne treninge snage i oblikovanja tijela.</p>
+            </div>
+            <div>
+              <h4 className="font-bold text-sm mb-3 text-slate-300">Radno vrijeme</h4>
+              <div className="text-slate-500 text-sm space-y-1">
+                <p>Pon / Sri / Pet</p>
+                <p>09:00 - 10:00 | 19:15 - 20:15 | 20:30 - 21:30</p>
+              </div>
+            </div>
+            <div>
+              <h4 className="font-bold text-sm mb-3 text-slate-300">Kontakt</h4>
+              <div className="text-slate-500 text-sm space-y-1">
+                <p>📍 Zadar, Hrvatska</p>
+                <p>📧 info@ellevate.hr</p>
+              </div>
+            </div>
           </div>
-          <div className="text-slate-500 text-sm">
-            © 2026 Ellevate. Sva prava pridržana.
-          </div>
-          <div className="flex gap-4 text-slate-400">
-            <a href="#" className="hover:text-white transition-colors">Instagram</a>
-            <a href="#" className="hover:text-white transition-colors">Facebook</a>
+          <div className="border-t border-white/10 pt-6 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div className="text-slate-500 text-sm">© 2026 Ellevate. Sva prava pridržana.</div>
+            <div className="flex gap-4 text-slate-400">
+              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="hover:text-pink-300 transition-colors">Instagram</a>
+              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="hover:text-pink-300 transition-colors">Facebook</a>
+            </div>
           </div>
         </div>
       </footer>

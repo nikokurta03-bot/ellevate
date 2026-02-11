@@ -21,11 +21,12 @@ export const metadata: Metadata = {
   keywords: ["trening", "fitness", "rezervacije", "snaga", "oblikovanje tijela"],
   openGraph: {
     title: "Ellevate Fitness Studio",
-    description: "SaaS za jednostavno upravljanje rezervacijama treninga",
+    description: "Ekskluzivni grupni treninzi dizajnirani za žene koje žele više. Snaga, energija, zajednica.",
     url: "https://www.ellevate.hr",
     siteName: "Ellevate",
     locale: "hr_HR",
     type: "website",
+    images: [{ url: 'https://ellevate.hr/og-image.jpg', width: 1200, height: 630, alt: 'Ellevate Fitness Studio' }],
   },
   twitter: {
     card: "summary_large_image",

@@ -2,6 +2,7 @@ import { NextRequest } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { errorResponse, successResponse, isSlotFull, canMakeReservation } from '@/lib/helpers';
 import { requireAuth } from '@/lib/auth';
+import { validateOrigin } from '@/lib/csrf';
 
 // GET /api/reservations - Dohvati rezervacije (requires auth)
 export async function GET(request: NextRequest) {
@@ -49,6 +50,8 @@ export async function GET(request: NextRequest) {
 
 // POST /api/reservations - Kreiraj rezervaciju (requires auth)
 export async function POST(request: NextRequest) {
+    const originError = validateOrigin(request);
+    if (originError) return originError;
     const { error, session } = await requireAuth(request);
     if (error) return error;
 

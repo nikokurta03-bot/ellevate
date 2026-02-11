@@ -17,15 +17,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        try {
-            const savedUser = localStorage.getItem('ellevate_user');
-            if (savedUser) {
-                setUser(JSON.parse(savedUser));
-            }
-        } catch (e) {
-            localStorage.removeItem('ellevate_user');
-        }
-        setIsLoading(false);
+        // Verify session with server instead of trusting localStorage alone
+        fetch('/api/auth/me')
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    setUser(data.data);
+                    localStorage.setItem('ellevate_user', JSON.stringify(data.data));
+                } else {
+                    setUser(null);
+                    localStorage.removeItem('ellevate_user');
+                }
+            })
+            .catch(() => {
+                // Fallback to localStorage if network fails
+                try {
+                    const savedUser = localStorage.getItem('ellevate_user');
+                    if (savedUser) setUser(JSON.parse(savedUser));
+                } catch {
+                    localStorage.removeItem('ellevate_user');
+                }
+            })
+            .finally(() => setIsLoading(false));
     }, []);
 
     const login = (userData: UserWithoutPassword) => {

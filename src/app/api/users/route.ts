@@ -2,6 +2,7 @@ import { NextRequest } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { excludePassword, errorResponse, successResponse, hashPassword, validateOIB } from '@/lib/helpers';
 import { requireAdmin } from '@/lib/auth';
+import { validateOrigin } from '@/lib/csrf';
 import { CreateUserInput } from '@/types';
 
 // GET /api/users - Dohvati sve korisnike (admin only)
@@ -21,9 +22,9 @@ export async function GET(request: NextRequest) {
 
         if (search) {
             where.OR = [
-                { firstName: { contains: search } },
-                { lastName: { contains: search } },
-                { email: { contains: search } },
+                { firstName: { contains: search, mode: 'insensitive' } },
+                { lastName: { contains: search, mode: 'insensitive' } },
+                { email: { contains: search, mode: 'insensitive' } },
                 { oib: { contains: search } },
             ];
         }
@@ -44,6 +45,8 @@ export async function GET(request: NextRequest) {
 
 // POST /api/users - Kreiraj novog korisnika (admin only)
 export async function POST(request: NextRequest) {
+    const originError = validateOrigin(request);
+    if (originError) return originError;
     const { error } = await requireAdmin(request);
     if (error) return error;
 

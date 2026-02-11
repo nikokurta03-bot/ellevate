@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useParams } from 'next/navigation';
+import ReactMarkdown from 'react-markdown';
 
 const articles: Record<string, {
     title: string;
@@ -296,19 +297,22 @@ export default function ArticlePage() {
             {/* Article Content */}
             <article className="max-w-4xl mx-auto px-4 pb-16">
                 <div className="glass-card prose prose-invert prose-lg max-w-none">
-                    <div
-                        className="article-content"
-                        dangerouslySetInnerHTML={{
-                            __html: article.content
-                                .replace(/## (.*)/g, '<h2 class="text-2xl font-bold mt-8 mb-4 gradient-text">$1</h2>')
-                                .replace(/### (.*)/g, '<h3 class="text-xl font-bold mt-6 mb-3 text-white">$1</h3>')
-                                .replace(/#### (.*)/g, '<h4 class="text-lg font-semibold mt-4 mb-2 text-pink-300">$1</h4>')
-                                .replace(/\*\*(.*?)\*\*/g, '<strong class="text-white font-semibold">$1</strong>')
-                                .replace(/\n\n/g, '</p><p class="text-slate-300 leading-relaxed mb-4">')
-                                .replace(/^- (.*)/gm, '<li class="text-slate-300 ml-4 mb-2">• $1</li>')
-                                .replace(/^\d+\. (.*)/gm, '<li class="text-slate-300 ml-4 mb-2">$1</li>')
-                        }}
-                    />
+                    <div className="article-content">
+                        <ReactMarkdown
+                            components={{
+                                h2: ({ children }) => <h2 className="text-2xl font-bold mt-8 mb-4 gradient-text">{children}</h2>,
+                                h3: ({ children }) => <h3 className="text-xl font-bold mt-6 mb-3 text-white">{children}</h3>,
+                                h4: ({ children }) => <h4 className="text-lg font-semibold mt-4 mb-2 text-pink-300">{children}</h4>,
+                                p: ({ children }) => <p className="text-slate-300 leading-relaxed mb-4">{children}</p>,
+                                strong: ({ children }) => <strong className="text-white font-semibold">{children}</strong>,
+                                li: ({ children }) => <li className="text-slate-300 ml-4 mb-2">{children}</li>,
+                                ul: ({ children }) => <ul className="mb-4">{children}</ul>,
+                                ol: ({ children }) => <ol className="mb-4">{children}</ol>,
+                            }}
+                        >
+                            {article.content}
+                        </ReactMarkdown>
+                    </div>
                 </div>
             </article>
 

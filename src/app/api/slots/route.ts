@@ -2,6 +2,7 @@ import { NextRequest } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { errorResponse, successResponse } from '@/lib/helpers';
 import { requireAuth, requireAdmin } from '@/lib/auth';
+import { validateOrigin } from '@/lib/csrf';
 import { startOfWeek, endOfWeek, addWeeks, format } from 'date-fns';
 
 // GET /api/slots - Dohvati termine (requires auth)
@@ -79,6 +80,8 @@ export async function GET(request: NextRequest) {
 
 // POST /api/slots - Generiraj termine za tjedan (admin only)
 export async function POST(request: NextRequest) {
+    const originError = validateOrigin(request);
+    if (originError) return originError;
     const { error } = await requireAdmin(request);
     if (error) return error;
     try {

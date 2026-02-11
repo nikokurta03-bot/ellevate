@@ -13,7 +13,11 @@ const TRAINING_TIMES = [
 async function main() {
     console.log('🌱 Seeding database...');
 
-    const hashedPassword = await bcrypt.hash('Ellevate123456', 10);
+    const adminPassword = process.env.ADMIN_PASSWORD || 'Ellevate123456';
+    if (!process.env.ADMIN_PASSWORD) {
+        console.warn('⚠️  ADMIN_PASSWORD not set, using default. Set ADMIN_PASSWORD env var in production!');
+    }
+    const hashedPassword = await bcrypt.hash(adminPassword, 10);
 
     const admin = await prisma.user.upsert({
         where: { email: 'mateazadar11@gmail.com' },
