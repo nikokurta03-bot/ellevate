@@ -1,56 +1,12 @@
-'use client';
-
-import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { blogArticles } from '@/data/blog-articles';
+import type { Metadata } from 'next';
 
-const blogArticles = [
-    {
-        id: 1,
-        slug: 'grupni-treninzi',
-        title: 'Zašto su grupni treninzi učinkovitiji?',
-        excerpt: 'Otkrijte kako zajednička energija i motivacija grupe može transformirati vaše fitness rezultate i učiniti vježbanje zabavnijim.',
-        image: '/blog/group-training.png',
-        readTime: '5 min',
-        category: 'Motivacija',
-    },
-    {
-        id: 2,
-        slug: 'trening-snage',
-        title: 'Osnove treninga snage za žene',
-        excerpt: 'Razbijamo mitove o treningu snage i pokazujemo kako pravilno dizanje utega može oblikovati vaše tijelo.',
-        image: '/blog/strength-training.png',
-        readTime: '7 min',
-        category: 'Snaga',
-    },
-    {
-        id: 3,
-        slug: 'hiit-vs-kardio',
-        title: 'HIIT vs. Kardio: Što je bolje za vas?',
-        excerpt: 'Usporedba intenzivnog intervalnog treninga i tradicionalnog kardija - pronađite što odgovara vašim ciljevima.',
-        image: '/blog/cardio-workout.png',
-        readTime: '6 min',
-        category: 'Kardio',
-    },
-    {
-        id: 4,
-        slug: 'istezanje-fleksibilnost',
-        title: 'Važnost istezanja i fleksibilnosti',
-        excerpt: 'Naučite zašto je fleksibilnost ključna za prevenciju ozljeda i kako ju poboljšati kroz svakodnevne vježbe.',
-        image: '/blog/stretching-yoga.png',
-        readTime: '4 min',
-        category: 'Wellness',
-    },
-    {
-        id: 5,
-        slug: 'zdrave-navike',
-        title: 'Zdrave navike za aktivni životni stil',
-        excerpt: 'Praktični savjeti za održavanje energije, hidrataciju i oporavak koji će unaprijediti vaše treninge.',
-        image: '/blog/healthy-lifestyle.png',
-        readTime: '5 min',
-        category: 'Lifestyle',
-    },
-];
+export const metadata: Metadata = {
+    title: 'Blog — Fitness savjeti',
+    description: 'Stručni članci o treningu, prehrani i zdravom životnom stilu koji će vam pomoći da postignete svoje ciljeve.',
+};
 
 export default function BlogPage() {
     return (
@@ -59,11 +15,8 @@ export default function BlogPage() {
             <nav className="fixed top-0 left-0 right-0 z-50 glass border-b border-white/10">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between items-center h-16">
-                        <Link href="/" className="flex items-center gap-2">
-                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-pink-300 to-purple-600 flex items-center justify-center">
-                                <span className="text-white font-bold text-xl">E</span>
-                            </div>
-                            <span className="text-xl font-bold gradient-text">Ellevate</span>
+                        <Link href="/" className="flex items-center">
+                            <Image src="/ellevate_logo.png" alt="Ellevate" width={140} height={40} className="h-8 sm:h-10 w-auto" />
                         </Link>
                         <Link href="/" className="btn-secondary py-2 px-6">
                             ← Povratak
@@ -101,6 +54,7 @@ export default function BlogPage() {
                                         src={article.image}
                                         alt={article.title}
                                         fill
+                                        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                                         className="object-cover group-hover:scale-110 transition-transform duration-500"
                                     />
                                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent" />
@@ -132,15 +86,8 @@ export default function BlogPage() {
             {/* Footer */}
             <footer className="border-t border-white/10 py-8 px-4">
                 <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
-                    <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-pink-300 to-purple-600 flex items-center justify-center">
-                            <span className="text-white font-bold">E</span>
-                        </div>
-                        <span className="font-bold">Ellevate</span>
-                    </div>
-                    <div className="text-slate-500 text-sm">
-                        © 2026 Ellevate. Sva prava pridržana.
-                    </div>
+                    <Image src="/ellevate_logo.png" alt="Ellevate" width={100} height={30} className="h-8 w-auto" />
+                    <div className="text-slate-500 text-sm">© 2026 Ellevate. Sva prava pridržana.</div>
                 </div>
             </footer>
         </div>
