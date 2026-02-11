@@ -162,34 +162,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Testimonials */}
-      <section className="py-24 px-4 bg-white/[0.02]">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <span className="text-pink-300 font-semibold text-sm uppercase tracking-wider">Iskustva</span>
-            <h2 className="text-4xl md:text-5xl font-bold mt-2 mb-4">
-              Što kažu naše <span className="gradient-text">članice</span>?
-            </h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              { name: 'Ana M.', text: 'Ellevate treninzi su mi potpuno promijenili rutinu. Grupna energija je nevjerojatna — uvijek se veselim sljedećem terminu!', tag: 'Članica 6 mjeseci' },
-              { name: 'Petra K.', text: 'Konačno sam pronašla trening koji me motivira. Trenerice su stručne, atmosfera je fantastična, a rezultati vidljivi već nakon mjesec dana.', tag: 'Članica 1 godinu' },
-              { name: 'Ivana S.', text: 'Rezervacijski sustav je super jednostavan. Odaberem termin, dođem i uživam. Preporuka svima koje traže kvalitetan grupni trening!', tag: 'Članica 3 mjeseca' },
-            ].map((t, i) => (
-              <div key={i} className="glass-card">
-                <div className="text-pink-300 text-2xl mb-3">★★★★★</div>
-                <p className="text-slate-300 text-sm mb-4 italic">&ldquo;{t.text}&rdquo;</p>
-                <div className="border-t border-white/10 pt-3">
-                  <p className="font-bold text-sm">{t.name}</p>
-                  <p className="text-slate-500 text-xs">{t.tag}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Blog Section */}
       <section id="blog" className="py-24 px-4">
         <div className="max-w-7xl mx-auto">
