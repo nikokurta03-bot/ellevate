@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { errorResponse, successResponse, isSlotFull, canMakeReservation } from '@/lib/helpers';
 import { requireAuth } from '@/lib/auth';
 import { validateOrigin } from '@/lib/csrf';
+import { sendBookingNotification } from '@/lib/email';
 
 // GET /api/reservations - Dohvati rezervacije (requires auth)
 export async function GET(request: NextRequest) {
@@ -158,6 +159,11 @@ export async function POST(request: NextRequest) {
                 },
             });
         }
+
+        // 🔔 Fire-and-forget email notification to admin
+        const userName = `${reservation.user.firstName} ${reservation.user.lastName}`;
+        const slotTime = `${reservation.slot.startTime} - ${reservation.slot.endTime}`;
+        sendBookingNotification(userName, reservation.slot.date, slotTime);
 
         return successResponse(reservation, 201);
     } catch (error) {

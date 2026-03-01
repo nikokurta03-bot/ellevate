@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { errorResponse, successResponse, canCancelReservation } from '@/lib/helpers';
 import { requireAuth } from '@/lib/auth';
 import { validateOrigin } from '@/lib/csrf';
+import { sendCancellationNotification } from '@/lib/email';
 
 // DELETE /api/reservations/[id] - Otkaži rezervaciju (requires auth)
 export async function DELETE(
@@ -64,6 +65,11 @@ export async function DELETE(
                 slot: true,
             },
         });
+
+        // 🔔 Fire-and-forget email notification to admin
+        const userName = `${updatedReservation.user.firstName} ${updatedReservation.user.lastName}`;
+        const slotTime = `${updatedReservation.slot.startTime} - ${updatedReservation.slot.endTime}`;
+        sendCancellationNotification(userName, updatedReservation.slot.date, slotTime);
 
         return successResponse({
             message: 'Rezervacija uspješno otkazana',
