@@ -66,10 +66,10 @@ export async function DELETE(
             },
         });
 
-        // 🔔 Fire-and-forget email notification to admin
+        // 🔔 Send email notification to admin (must await on Vercel serverless)
         const userName = `${updatedReservation.user.firstName} ${updatedReservation.user.lastName}`;
         const slotTime = `${updatedReservation.slot.startTime} - ${updatedReservation.slot.endTime}`;
-        sendCancellationNotification(userName, updatedReservation.slot.date, slotTime);
+        await sendCancellationNotification(userName, updatedReservation.slot.date, slotTime);
 
         return successResponse({
             message: 'Rezervacija uspješno otkazana',

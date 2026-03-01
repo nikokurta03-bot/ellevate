@@ -160,10 +160,10 @@ export async function POST(request: NextRequest) {
             });
         }
 
-        // 🔔 Fire-and-forget email notification to admin
+        // 🔔 Send email notification to admin (must await on Vercel serverless)
         const userName = `${reservation.user.firstName} ${reservation.user.lastName}`;
         const slotTime = `${reservation.slot.startTime} - ${reservation.slot.endTime}`;
-        sendBookingNotification(userName, reservation.slot.date, slotTime);
+        await sendBookingNotification(userName, reservation.slot.date, slotTime);
 
         return successResponse(reservation, 201);
     } catch (error) {
