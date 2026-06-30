@@ -6,8 +6,7 @@ const prisma = new PrismaClient();
 
 const TRAINING_TIMES = [
     { start: '09:00', end: '10:00' },
-    { start: '19:15', end: '20:15' },
-    { start: '20:30', end: '21:30' },
+    { start: '20:00', end: '21:00' },
 ];
 
 async function main() {

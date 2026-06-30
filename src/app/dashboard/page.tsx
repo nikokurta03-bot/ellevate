@@ -21,7 +21,7 @@ export default function Dashboard() {
     const weekStart = useMemo(() => startOfWeek(addWeeks(new Date(), weekOffset), { weekStartsOn: 1 }), [weekOffset]);
     // Only Monday (0), Wednesday (2), Friday (4) - skip Tuesday and Thursday
     const weekDays = useMemo(() => [0, 2, 4].map((dayOffset) => addDays(weekStart, dayOffset)), [weekStart]);
-    const timeRows = useMemo(() => ['09:00', '19:15', '20:30'], []);
+    const timeRows = useMemo(() => ['09:00', '20:00'], []);
 
     // 🚀 OPTIMIZACIJA: useCallback za stabilnu referencu
     const fetchData = useCallback(async () => {

@@ -251,7 +251,7 @@ export default function HomePage() {
               <h4 className="font-bold text-sm mb-3 text-slate-300">Radno vrijeme</h4>
               <div className="text-slate-500 text-sm space-y-1">
                 <p>Pon / Sri / Pet</p>
-                <p>09:00 - 10:00 | 19:15 - 20:15 | 20:30 - 21:30</p>
+                <p>09:00 - 10:00 | 20:00 - 21:00</p>
               </div>
             </div>
             <div>
