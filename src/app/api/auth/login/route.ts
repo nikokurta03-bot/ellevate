@@ -6,7 +6,7 @@ import { validateOrigin } from '@/lib/csrf';
 
 // In-memory rate limiting
 const loginAttempts = new Map<string, { count: number; firstAttempt: number }>();
-const MAX_ATTEMPTS = 5;
+const MAX_ATTEMPTS = 20;
 const WINDOW_MS = 15 * 60 * 1000; // 15 minutes
 
 function isRateLimited(email: string): boolean {
