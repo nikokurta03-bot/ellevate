@@ -12,16 +12,26 @@ const WINDOW_MS = 15 * 60 * 1000; // 15 minutes
 function isRateLimited(email: string): boolean {
     const now = Date.now();
     const record = loginAttempts.get(email);
-    if (!record) {
-        loginAttempts.set(email, { count: 1, firstAttempt: now });
-        return false;
-    }
+    if (!record) return false;
     if (now - record.firstAttempt > WINDOW_MS) {
-        loginAttempts.set(email, { count: 1, firstAttempt: now });
+        loginAttempts.delete(email);
         return false;
     }
-    record.count++;
-    return record.count > MAX_ATTEMPTS;
+    return record.count >= MAX_ATTEMPTS;
+}
+
+function recordFailedAttempt(email: string) {
+    const now = Date.now();
+    const record = loginAttempts.get(email);
+    if (!record || now - record.firstAttempt > WINDOW_MS) {
+        loginAttempts.set(email, { count: 1, firstAttempt: now });
+    } else {
+        record.count++;
+    }
+}
+
+function clearRateLimit(email: string) {
+    loginAttempts.delete(email);
 }
 
 // POST /api/auth/login - Prijava korisnika
@@ -51,6 +61,7 @@ export async function POST(request: NextRequest) {
         });
 
         if (!user) {
+            recordFailedAttempt(email);
             return errorResponse('Pogrešan email ili lozinka', 401);
         }
 
@@ -58,8 +69,12 @@ export async function POST(request: NextRequest) {
         const isValid = await verifyPassword(password, user.password);
 
         if (!isValid) {
+            recordFailedAttempt(email);
             return errorResponse('Pogrešan email ili lozinka', 401);
         }
+
+        // Reset rate limit on successful login
+        clearRateLimit(email);
 
         // Sign JWT token
         const token = await signToken(user.id, user.role);
