@@ -133,3 +133,15 @@ async function sendWithRetry(resend: Resend, message: Parameters<Resend['emails'
         if (attempt < 2) await new Promise(resolve => setTimeout(resolve, 250 * (attempt + 1)));
     }
 }
+
+export async function sendMembershipEnquiry(enquiry: import('./enquiry').Enquiry) {
+    const { enquiryMessage } = await import('./enquiry');
+    const resend = getResend();
+    if (!resend) throw new Error('Mail service not configured');
+    const result = await resend.emails.send({
+        ...enquiryMessage(enquiry),
+        from: FROM_EMAIL,
+        to: 'mateazadar11@gmail.com',
+    }, { idempotencyKey: `membership-enquiry/${enquiry.requestId}` });
+    if (result.error || !result.data?.id) throw new Error('Mail service did not accept enquiry');
+}

@@ -110,8 +110,8 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
                     <p className="text-slate-400 mb-6">
                         Pridružite se Ellevate zajednici i započnite svoje fitness putovanje već danas.
                     </p>
-                    <Link href="/" className="btn-primary inline-block">
-                        Rezerviraj trening
+                    <Link href="/pridruzi-se" target="_blank" rel="noopener noreferrer" className="btn-primary inline-block">
+                        Pošalji upit za članstvo
                     </Link>
                 </div>
             </section>

@@ -15,11 +15,10 @@ export default function HomePage() {
             <div className="flex items-center">
               <BrandLogo />
             </div>
-            <LoginButton
-              className="btn-primary py-2 px-6"
-            >
-              Prijava
-            </LoginButton>
+            <div className="flex items-center gap-2 sm:gap-4">
+              <LoginButton className="text-sm text-slate-300 hover:text-white px-2 py-2">Prijava članica</LoginButton>
+              <Link href="/pridruzi-se" target="_blank" rel="noopener noreferrer" className="btn-primary py-2 px-4">Prijavi se</Link>
+            </div>
           </div>
         </div>
       </nav>
@@ -58,12 +57,12 @@ export default function HomePage() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-              <LoginButton
+              <Link href="/pridruzi-se" target="_blank" rel="noopener noreferrer"
                   className="btn-primary text-lg px-8 py-4 group"
               >
                 Započni sada
                 <span className="ml-2 group-hover:translate-x-1 transition-transform inline-block">→</span>
-              </LoginButton>
+              </Link>
               <a href="#blog" className="btn-secondary text-lg px-8 py-4">
                 Saznaj više
               </a>
@@ -84,8 +83,8 @@ export default function HomePage() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
-              { step: '01', icon: '📝', title: 'Prijavi se', desc: 'Za otvaranje računa obratite se studiju, zatim se prijavite za pristup rezervacijama.' },
-              { step: '02', icon: '📅', title: 'Odaberi termin', desc: 'Pregledajte tjedni raspored i rezervirajte termin koji vam odgovara.' },
+              { step: '01', icon: '📝', title: 'Pošalji upit', desc: 'Ispunite kratki obrazac za članstvo. Javit ćemo vam se s više informacija.' },
+              { step: '02', icon: '📅', title: 'Dogovori početak', desc: 'Nakon dogovora sa studijem dobit ćete pristup rasporedu i rezervacijama.' },
               { step: '03', icon: '💪', title: 'Dođi na trening', desc: 'Pojavite se, dajte sve od sebe i uživajte u energiji grupe!' },
             ].map((item, i) => (
               <div key={i} className="glass-card text-center group">
@@ -166,11 +165,11 @@ export default function HomePage() {
               Pridružite se našoj zajednici i započnite svoje fitness putovanje već danas.
               Vaše najbolje ja vas čeka.
             </p>
-            <LoginButton
+            <Link href="/pridruzi-se" target="_blank" rel="noopener noreferrer"
               className="btn-primary text-lg px-8 py-4"
             >
               Prijavi se sada
-            </LoginButton>
+            </Link>
           </div>
         </div>
       </section>
@@ -201,7 +200,7 @@ export default function HomePage() {
           </div>
           <div className="border-t border-white/10 pt-6 flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="text-slate-500 text-sm">© 2026 Ellevate. Sva prava pridržana.</div>
-            <a href="mailto:info@ellevate.hr" className="text-slate-300 hover:text-pink-300">Upit za članstvo i cijene</a>
+            <Link href="/pridruzi-se" target="_blank" rel="noopener noreferrer" className="text-slate-300 hover:text-pink-300">Upit za članstvo i cijene</Link>
           </div>
         </div>
       </footer>
