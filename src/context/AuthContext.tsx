@@ -1,7 +1,7 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { UserWithoutPassword } from '@/types';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
+import type { UserWithoutPassword } from '@/types';
 
 type AuthContextType = {
     user: UserWithoutPassword | null;
@@ -15,58 +15,55 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [user, setUser] = useState<UserWithoutPassword | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const sessionRevision = useRef(0);
 
     useEffect(() => {
-        // Verify session with server instead of trusting localStorage alone
-        fetch('/api/auth/me')
+        const controller = new AbortController();
+        const revision = sessionRevision.current;
+        let disposed = false;
+        const timeout = setTimeout(() => controller.abort(), 10000);
+        // A failed session check must never restore an unverified local identity.
+        fetch('/api/auth/me', { signal: controller.signal, cache: 'no-store' })
             .then(r => r.json())
             .then(data => {
-                if (data.success) {
-                    setUser(data.data);
-                    localStorage.setItem('ellevate_user', JSON.stringify(data.data));
-                } else {
-                    setUser(null);
-                    localStorage.removeItem('ellevate_user');
-                }
+                if (!disposed && sessionRevision.current === revision) setUser(data.success ? data.data : null);
             })
             .catch(() => {
-                // Fallback to localStorage if network fails
-                try {
-                    const savedUser = localStorage.getItem('ellevate_user');
-                    if (savedUser) setUser(JSON.parse(savedUser));
-                } catch {
-                    localStorage.removeItem('ellevate_user');
-                }
+                if (!disposed && sessionRevision.current === revision) setUser(null);
             })
-            .finally(() => setIsLoading(false));
+            .finally(() => {
+                clearTimeout(timeout);
+                if (!disposed && sessionRevision.current === revision) setIsLoading(false);
+            });
+        return () => {
+            disposed = true;
+            clearTimeout(timeout);
+            controller.abort();
+        };
     }, []);
 
     const login = (userData: UserWithoutPassword) => {
+        sessionRevision.current++;
         setUser(userData);
-        localStorage.setItem('ellevate_user', JSON.stringify(userData));
+        setIsLoading(false);
     };
 
     const logout = async () => {
+        sessionRevision.current++;
         setUser(null);
-        localStorage.removeItem('ellevate_user');
+        setIsLoading(false);
         try {
             await fetch('/api/auth/logout', { method: 'POST' });
-        } catch (e) {
-            // Cookie cleanup is best-effort
+        } catch {
+            // Cookie cleanup is best-effort.
         }
     };
 
-    return (
-        <AuthContext.Provider value={{ user, login, logout, isLoading }}>
-            {children}
-        </AuthContext.Provider>
-    );
+    return <AuthContext.Provider value={{ user, login, logout, isLoading }}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {
     const context = useContext(AuthContext);
-    if (context === undefined) {
-        throw new Error('useAuth must be used within an AuthProvider');
-    }
+    if (context === undefined) throw new Error('useAuth must be used within an AuthProvider');
     return context;
 }

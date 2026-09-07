@@ -1,54 +1,11 @@
-'use client';
-
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useAuth } from '@/context/AuthContext';
-import { ApiResponse } from '@/types';
+import { LoginProvider, LoginButton } from '@/components/HomeLogin';
 import { blogArticles } from '@/data/blog-articles';
 
 export default function HomePage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [showLogin, setShowLogin] = useState(false);
-  const router = useRouter();
-  const { login } = useAuth();
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError('');
-
-    try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      });
-
-      const result: ApiResponse<{ user: any }> = await response.json();
-
-      if (result.success) {
-        login(result.data.user);
-        if (result.data.user.role === 'admin') {
-          router.push('/admin');
-        } else {
-          router.push('/dashboard');
-        }
-      } else {
-        setError(result.error);
-      }
-    } catch (err) {
-      setError('Nešto je pošlo po zlu. Pokušajte ponovno.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   return (
+    <LoginProvider>
     <div className="min-h-screen">
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 glass border-b border-white/10">
@@ -64,12 +21,11 @@ export default function HomePage() {
                 priority
               />
             </div>
-            <button
-              onClick={() => setShowLogin(true)}
+            <LoginButton
               className="btn-primary py-2 px-6"
             >
               Prijava
-            </button>
+            </LoginButton>
           </div>
         </div>
       </nav>
@@ -85,13 +41,14 @@ export default function HomePage() {
 
         <div className="relative z-10 px-4 max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-8 lg:gap-16">
           {/* Logo on Left */}
-          <div className="flex-shrink-0">
+          <div className="w-full max-w-lg lg:w-1/2 flex-shrink-0">
             <Image
               src="/ellevate_logo.png"
               alt="Ellevate Fitness Studio"
-              width={800}
-              height={240}
-              className="h-64 sm:h-80 md:h-96 lg:h-[32rem] w-auto invert brightness-100 drop-shadow-[0_0_30px_rgba(244,114,182,0.5)]"
+              width={842}
+              height={595}
+              sizes="(max-width: 1024px) 90vw, 45vw"
+              className="w-full h-auto invert brightness-100 drop-shadow-[0_0_30px_rgba(244,114,182,0.5)]"
               priority
             />
           </div>
@@ -100,7 +57,7 @@ export default function HomePage() {
           <div className="text-center lg:text-left">
             <div className="mb-6 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-sm text-slate-300">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              Rezervacije otvorene za veljače 2026.
+              Rezervirajte svoj termin treninga
             </div>
 
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
@@ -114,13 +71,12 @@ export default function HomePage() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-              <button
-                onClick={() => setShowLogin(true)}
-                className="btn-primary text-lg px-8 py-4 group"
+              <LoginButton
+                  className="btn-primary text-lg px-8 py-4 group"
               >
                 Započni sada
                 <span className="ml-2 group-hover:translate-x-1 transition-transform inline-block">→</span>
-              </button>
+              </LoginButton>
               <a href="#blog" className="btn-secondary text-lg px-8 py-4">
                 Saznaj više
               </a>
@@ -129,7 +85,7 @@ export default function HomePage() {
         </div>
 
         {/* Scroll indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
+        <div aria-hidden="true" className="hidden lg:block absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
           <div className="w-6 h-10 rounded-full border-2 border-white/20 flex items-start justify-center p-2">
             <div className="w-1.5 h-3 bg-white/40 rounded-full animate-pulse" />
           </div>
@@ -147,7 +103,7 @@ export default function HomePage() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
-              { step: '01', icon: '📝', title: 'Registriraj se', desc: 'Kreirajte svoj račun u par klikova i pristupite sustavu rezervacija.' },
+              { step: '01', icon: '📝', title: 'Prijavi se', desc: 'Za otvaranje računa obratite se studiju, zatim se prijavite za pristup rezervacijama.' },
               { step: '02', icon: '📅', title: 'Odaberi termin', desc: 'Pregledajte tjedni raspored i rezervirajte termin koji vam odgovara.' },
               { step: '03', icon: '💪', title: 'Dođi na trening', desc: 'Pojavite se, dajte sve od sebe i uživajte u energiji grupe!' },
             ].map((item, i) => (
@@ -229,12 +185,11 @@ export default function HomePage() {
               Pridružite se našoj zajednici i započnite svoje fitness putovanje već danas.
               Vaše najbolje ja vas čeka.
             </p>
-            <button
-              onClick={() => setShowLogin(true)}
+            <LoginButton
               className="btn-primary text-lg px-8 py-4"
             >
               Prijavi se sada
-            </button>
+            </LoginButton>
           </div>
         </div>
       </section>
@@ -258,7 +213,7 @@ export default function HomePage() {
               <h4 className="font-bold text-sm mb-3 text-slate-300">Kontakt</h4>
               <div className="text-slate-500 text-sm space-y-1">
                 <p>📍 Zadar, Hrvatska</p>
-                <p>📧 info@ellevate.hr</p>
+                <a href="mailto:info@ellevate.hr">📧 info@ellevate.hr</a>
               </div>
             </div>
           </div>
@@ -272,68 +227,7 @@ export default function HomePage() {
         </div>
       </footer>
 
-      {/* Login Modal */}
-      {showLogin && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
-          <div className="glass-card w-full max-w-md relative">
-            <button
-              onClick={() => setShowLogin(false)}
-              className="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors"
-            >
-              ✕
-            </button>
-
-            <div className="text-center mb-6">
-              <h2 className="text-2xl font-bold">Dobrodošli natrag</h2>
-              <p className="text-slate-400 text-sm mt-1">Prijavite se za pristup rezervacijama</p>
-            </div>
-
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1">
-                  Email adresa
-                </label>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-300 transition-all"
-                  placeholder="vas@email.com"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1">
-                  Lozinka
-                </label>
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-300 transition-all"
-                  placeholder="••••••••"
-                />
-              </div>
-
-              {error && (
-                <div className="p-3 bg-red-500/10 border border-red-500/20 text-red-400 rounded-lg text-sm text-center">
-                  {error}
-                </div>
-              )}
-
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="w-full btn-primary"
-              >
-                {isLoading ? 'Prijava u tijeku...' : 'Prijavi se'}
-              </button>
-            </form>
-          </div>
-        </div>
-      )}
     </div>
+    </LoginProvider>
   );
 }
