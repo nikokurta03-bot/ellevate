@@ -1,3 +1,4 @@
+import { Prisma } from '@prisma/client';
 import { NextRequest } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { excludePassword, errorResponse, successResponse, hashPassword, validateOIB } from '@/lib/helpers';
@@ -97,7 +98,7 @@ export async function PUT(
         }
 
         // Prepare update data
-        const updateData: any = {};
+        const updateData: Prisma.UserUpdateInput = {};
         if (body.email) updateData.email = body.email;
         if (body.firstName) updateData.firstName = body.firstName;
         if (body.lastName) updateData.lastName = body.lastName;

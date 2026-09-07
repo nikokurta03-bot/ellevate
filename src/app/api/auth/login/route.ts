@@ -101,9 +101,9 @@ export async function POST(request: NextRequest) {
         });
 
         return response;
-    } catch (error: any) {
+    } catch (error) {
         console.error('Error logging in:', error);
-        return errorResponse(`Greška pri prijavi: ${error.message || 'Nepoznata greška'}`, 500);
+        return errorResponse('Greška pri prijavi. Pokušajte ponovno.', 500);
     }
 }
 

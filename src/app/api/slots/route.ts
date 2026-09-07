@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { errorResponse, successResponse } from '@/lib/helpers';
 import { requireAuth, requireAdmin } from '@/lib/auth';
 import { validateOrigin } from '@/lib/csrf';
-import { startOfWeek, endOfWeek, addWeeks, format } from 'date-fns';
+import { studioDateKey } from '@/lib/booking-time';
 
 // GET /api/slots - Dohvati termine (requires auth)
 export async function GET(request: NextRequest) {
@@ -13,22 +13,20 @@ export async function GET(request: NextRequest) {
         const { searchParams } = new URL(request.url);
         const weekOffset = parseInt(searchParams.get('week') || '0');
         const date = searchParams.get('date');
+        if (!Number.isInteger(weekOffset) || Math.abs(weekOffset) > 520) return errorResponse('Neispravan tjedan');
+        if (date && (!/^\d{4}-\d{2}-\d{2}$/.test(date) || Number.isNaN(Date.parse(date)))) return errorResponse('Neispravan datum');
 
         let startDate: Date;
         let endDate: Date;
 
         if (date) {
             // Specific date
-            startDate = new Date(date);
-            startDate.setHours(0, 0, 0, 0);
-            endDate = new Date(date);
-            endDate.setHours(23, 59, 59, 999);
+            startDate = new Date(`${date}T00:00:00Z`);
+            endDate = new Date(`${date}T23:59:59.999Z`);
         } else {
             // Week view
-            const today = new Date();
-            const weekStart = startOfWeek(addWeeks(today, weekOffset), { weekStartsOn: 1 });
-            startDate = weekStart;
-            endDate = endOfWeek(weekStart, { weekStartsOn: 1 });
+            startDate = calendarWeekStart(weekOffset);
+            endDate = new Date(startDate.getTime() + 7 * 86400000 - 1);
         }
 
         const slots = await prisma.trainingSlot.findMany({
@@ -54,7 +52,6 @@ export async function GET(request: NextRequest) {
                                 id: true,
                                 firstName: true,
                                 lastName: true,
-                                email: true,
                             },
                         },
                     },
@@ -95,8 +92,8 @@ export async function POST(request: NextRequest) {
             { start: '20:30', end: '21:30' },
         ];
 
-        const today = new Date();
-        const weekStart = startOfWeek(addWeeks(today, weekOffset), { weekStartsOn: 1 });
+        if (!Number.isInteger(weekOffset) || Math.abs(weekOffset) > 520) return errorResponse('Neispravan tjedan');
+        const weekStart = calendarWeekStart(weekOffset);
 
         // Only Monday (0), Wednesday (2), Friday (4) - skip Tuesday and Thursday
         const trainingDays = [0, 2, 4];
@@ -104,8 +101,8 @@ export async function POST(request: NextRequest) {
 
         for (const day of trainingDays) {
             const date = new Date(weekStart);
-            date.setDate(date.getDate() + day);
-            const dateStr = format(date, 'yyyy-MM-dd');
+            date.setUTCDate(date.getUTCDate() + day);
+            const dateStr = date.toISOString().slice(0, 10);
 
             for (const time of TRAINING_TIMES) {
                 slotsToCreate.push({
@@ -135,4 +132,11 @@ export async function POST(request: NextRequest) {
         console.error('Error creating slots:', error);
         return errorResponse('Greška pri kreiranju termina', 500);
     }
+}
+
+function calendarWeekStart(weekOffset: number) {
+    const date = new Date(`${studioDateKey()}T00:00:00Z`);
+    const daysSinceMonday = (date.getUTCDay() + 6) % 7;
+    date.setUTCDate(date.getUTCDate() - daysSinceMonday + weekOffset * 7);
+    return date;
 }

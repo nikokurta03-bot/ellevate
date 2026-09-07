@@ -1,3 +1,4 @@
+import BrandLogo from '@/components/BrandLogo';
 import Link from 'next/link';
 import Image from 'next/image';
 import { blogArticles } from '@/data/blog-articles';
@@ -16,7 +17,7 @@ export default function BlogPage() {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between items-center h-16">
                         <Link href="/" className="flex items-center">
-                            <Image src="/ellevate_logo.png" alt="Ellevate" width={140} height={40} className="h-8 sm:h-10 w-auto" />
+                            <BrandLogo />
                         </Link>
                         <Link href="/" className="btn-secondary py-2 px-6">
                             ← Povratak
@@ -25,6 +26,7 @@ export default function BlogPage() {
                 </div>
             </nav>
 
+            <main id="main-content" tabIndex={-1}>
             {/* Blog Header */}
             <section className="pt-24 pb-12 px-4">
                 <div className="max-w-7xl mx-auto text-center">
@@ -83,10 +85,11 @@ export default function BlogPage() {
                 </div>
             </section>
 
+            </main>
             {/* Footer */}
             <footer className="border-t border-white/10 py-8 px-4">
                 <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
-                    <Image src="/ellevate_logo.png" alt="Ellevate" width={100} height={30} className="h-8 w-auto" />
+                    <BrandLogo />
                     <div className="text-slate-500 text-sm">© 2026 Ellevate. Sva prava pridržana.</div>
                 </div>
             </footer>

@@ -1,3 +1,4 @@
+import BrandLogo from '@/components/BrandLogo';
 import Image from 'next/image';
 import Link from 'next/link';
 import { LoginProvider, LoginButton } from '@/components/HomeLogin';
@@ -12,14 +13,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <Image
-                src="/ellevate_logo.png"
-                alt="Ellevate"
-                width={140}
-                height={40}
-                className="h-8 sm:h-10 w-auto"
-                priority
-              />
+              <BrandLogo />
             </div>
             <LoginButton
               className="btn-primary py-2 px-6"
@@ -30,6 +24,7 @@ export default function HomePage() {
         </div>
       </nav>
 
+      <main id="main-content" tabIndex={-1}>
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
         {/* Animated background */}
@@ -41,16 +36,8 @@ export default function HomePage() {
 
         <div className="relative z-10 px-4 max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-8 lg:gap-16">
           {/* Logo on Left */}
-          <div className="w-full max-w-lg lg:w-1/2 flex-shrink-0">
-            <Image
-              src="/ellevate_logo.png"
-              alt="Ellevate Fitness Studio"
-              width={842}
-              height={595}
-              sizes="(max-width: 1024px) 90vw, 45vw"
-              className="w-full h-auto invert brightness-100 drop-shadow-[0_0_30px_rgba(244,114,182,0.5)]"
-              priority
-            />
+          <div className="w-full max-w-lg lg:w-1/2 flex-shrink-0 text-center">
+            <BrandLogo large priority />
           </div>
 
           {/* Text Content on Right */}
@@ -188,12 +175,13 @@ export default function HomePage() {
         </div>
       </section>
 
+      </main>
       {/* Footer */}
       <footer className="border-t border-white/10 py-12 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
             <div>
-              <Image src="/ellevate_logo.png" alt="Ellevate" width={120} height={36} className="h-8 w-auto mb-4" />
+              <BrandLogo />
               <p className="text-slate-500 text-sm">Ekskluzivni studio za grupne treninge snage i oblikovanja tijela.</p>
             </div>
             <div>
@@ -213,10 +201,7 @@ export default function HomePage() {
           </div>
           <div className="border-t border-white/10 pt-6 flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="text-slate-500 text-sm">© 2026 Ellevate. Sva prava pridržana.</div>
-            <div className="flex gap-4 text-slate-400">
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="hover:text-pink-300 transition-colors">Instagram</a>
-              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="hover:text-pink-300 transition-colors">Facebook</a>
-            </div>
+            <a href="mailto:info@ellevate.hr" className="text-slate-300 hover:text-pink-300">Upit za članstvo i cijene</a>
           </div>
         </div>
       </footer>

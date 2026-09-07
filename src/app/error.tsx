@@ -1,6 +1,8 @@
 'use client';
 
-export default function Error({ error, reset }: { error: Error; reset: () => void }) {
+import Link from 'next/link';
+
+export default function Error({ reset }: { error: Error; reset: () => void }) {
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="glass-card text-center max-w-md">
@@ -13,9 +15,9 @@ export default function Error({ error, reset }: { error: Error; reset: () => voi
           <button onClick={reset} className="btn-primary">
             Pokušaj ponovno
           </button>
-          <a href="/" className="btn-secondary">
+          <Link href="/" className="btn-secondary">
             Početna
-          </a>
+          </Link>
         </div>
       </div>
     </div>

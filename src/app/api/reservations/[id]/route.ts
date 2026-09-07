@@ -1,9 +1,12 @@
-import { NextRequest } from 'next/server';
+import { cancelTraining, BookingError } from '@/lib/booking-service';
+import { NextRequest, after } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { errorResponse, successResponse, canCancelReservation } from '@/lib/helpers';
+import { errorResponse, successResponse } from '@/lib/helpers';
 import { requireAuth } from '@/lib/auth';
 import { validateOrigin } from '@/lib/csrf';
 import { sendCancellationNotification } from '@/lib/email';
+
+export const maxDuration = 30;
 
 // DELETE /api/reservations/[id] - Otkaži rezervaciju (requires auth)
 export async function DELETE(
@@ -22,60 +25,19 @@ export async function DELETE(
             return errorResponse('Neispravan ID rezervacije');
         }
 
-        // Check if reservation exists
-        const reservation = await prisma.reservation.findUnique({
-            where: { id: reservationId },
-            include: { slot: true },
-        });
+        const updatedReservation = await cancelTraining(prisma, reservationId, session!);
 
-        if (!reservation) {
-            return errorResponse('Rezervacija nije pronađena', 404);
-        }
-
-        // Check ownership (admins can cancel anything)
-        if (session!.role !== 'admin' && reservation.userId !== session!.userId) {
-            return errorResponse('Možete otkazati samo svoje rezervacije', 403);
-        }
-
-        if (reservation.status === 'cancelled') {
-            return errorResponse('Rezervacija je već otkazana');
-        }
-
-        // Check if cancellation is allowed (1 hour before)
-        if (!canCancelReservation(reservation.slot.date, reservation.slot.startTime)) {
-            return errorResponse('Nije moguće otkazati rezervaciju manje od 3 sata prije početka termina');
-        }
-
-        // Cancel reservation
-        const updatedReservation = await prisma.reservation.update({
-            where: { id: reservationId },
-            data: {
-                status: 'cancelled',
-                cancelledAt: new Date(),
-            },
-            include: {
-                user: {
-                    select: {
-                        id: true,
-                        firstName: true,
-                        lastName: true,
-                        email: true,
-                    },
-                },
-                slot: true,
-            },
-        });
-
-        // 🔔 Send email notification to admin (must await on Vercel serverless)
+        // Keep notification work alive after the response on Vercel.
         const userName = `${updatedReservation.user.firstName} ${updatedReservation.user.lastName}`;
         const slotTime = `${updatedReservation.slot.startTime} - ${updatedReservation.slot.endTime}`;
-        await sendCancellationNotification(userName, updatedReservation.slot.date, slotTime);
+        after(() => sendCancellationNotification(userName, updatedReservation.slot.date, slotTime));
 
         return successResponse({
             message: 'Rezervacija uspješno otkazana',
             reservation: updatedReservation,
         });
     } catch (error) {
+        if (error instanceof BookingError) return errorResponse(error.message, error.status);
         console.error('Error cancelling reservation:', error);
         return errorResponse('Greška pri otkazivanju rezervacije', 500);
     }

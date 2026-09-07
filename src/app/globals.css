@@ -168,7 +168,7 @@ html {
 
   /* Better font sizes on small screens */
   html {
-    font-size: 15px;
+    font-size: 16px;
   }
 }
 
@@ -185,5 +185,39 @@ html {
     background: rgba(255, 255, 255, 0.03);
     border-color: rgba(255, 255, 255, 0.1);
     transform: none;
+  }
+}
+/* Display the supplied logo without its empty margin, legibly on dark surfaces. */
+.brand-logo {
+  position: relative;
+  display: inline-block;
+  flex-shrink: 0;
+  width: 112px;
+  aspect-ratio: 365 / 185;
+  overflow: hidden;
+  vertical-align: middle;
+}
+.brand-logo img {
+  position: absolute;
+  width: 230.685%;
+  max-width: none;
+  height: auto;
+  left: -65.753%;
+  top: -110.811%;
+  filter: brightness(0) invert(1);
+}
+.brand-logo-large { width: min(100%, 420px); }
+
+/* Readable secondary text and controls against the studio's dark backgrounds. */
+.text-slate-500, .text-slate-600 { color: #a9b5c8; }
+.bg-pink-400.text-white, .bg-pink-300\/80 { color: #17101d; }
+html { scroll-padding-top: 5rem; }
+main:focus { outline: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
   }
 }

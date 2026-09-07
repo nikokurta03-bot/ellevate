@@ -1,6 +1,6 @@
 'use client';
 
-export default function GlobalError({ error, reset }: { error: Error; reset: () => void }) {
+export default function GlobalError({ reset }: { error: Error; reset: () => void }) {
   return (
     <html lang="hr">
       <body style={{ background: '#0f0a14', color: '#f8fafc', fontFamily: 'Inter, sans-serif' }}>

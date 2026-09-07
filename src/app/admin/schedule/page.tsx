@@ -4,6 +4,7 @@ import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import AdminNav from '@/components/AdminNav';
 import { ApiResponse, TrainingSlotWithCount } from '@/types';
 import { format, startOfWeek, addDays, addWeeks } from 'date-fns';
+import { slotDateKey, studioDateKey } from '@/lib/booking-time';
 import { hr } from 'date-fns/locale';
 import { useToast } from '@/components/Toasts';
 
@@ -15,7 +16,7 @@ export default function AdminSchedulePage() {
     const [selectedDayIndex, setSelectedDayIndex] = useState(0);
 
     // 🚀 OPTIMIZACIJA: Memoizirani izračuni datuma
-    const weekStart = useMemo(() => startOfWeek(addWeeks(new Date(), weekOffset), { weekStartsOn: 1 }), [weekOffset]);
+    const weekStart = useMemo(() => startOfWeek(addWeeks(new Date(`${studioDateKey()}T12:00:00`), weekOffset), { weekStartsOn: 1 }), [weekOffset]);
     // Only Monday (0), Wednesday (2), Friday (4) - skip Tuesday and Thursday
     const weekDays = useMemo(() => [0, 2, 4].map((dayOffset) => addDays(weekStart, dayOffset)), [weekStart]);
     const timeRows = useMemo(() => ['09:00', '18:15', '19:15', '20:30'], []);
@@ -55,14 +56,13 @@ export default function AdminSchedulePage() {
                 success(result.data.message);
                 fetchSlots();
             }
-        } catch (err) {
+        } catch {
             error('Greška pri generiranju termina');
         }
     }, [weekOffset, fetchSlots, success, error]);
 
     // Mobile: render a single selected day's slots
-    const renderMobileSlotCard = (slot: TrainingSlotWithCount | undefined, time: string, day: Date) => {
-        const slotDateStr = format(day, 'yyyy-MM-dd');
+    const renderMobileSlotCard = (slot: TrainingSlotWithCount | undefined, time: string) => {
 
         if (!slot) {
             return (
@@ -99,7 +99,8 @@ export default function AdminSchedulePage() {
         <div className="min-h-screen">
             <AdminNav />
 
-            <main className="p-4 sm:p-6 max-w-7xl mx-auto animate-fade-in">
+            <main id="main-content" tabIndex={-1} className="p-4 sm:p-6 max-w-7xl mx-auto animate-fade-in">
+                {isLoading && <p role="status">Učitavanje rasporeda...</p>}
                 {/* Header */}
                 <header className="flex flex-col gap-4 mb-6 sm:mb-8">
                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -149,13 +150,12 @@ export default function AdminSchedulePage() {
                         <div className="space-y-3">
                             {timeRows.map((time) => {
                                 const day = weekDays[selectedDayIndex];
-                                const slotDateStr = format(day, 'yyyy-MM-dd');
                                 const slot = slots.find(s =>
-                                    format(new Date(s.date), 'yyyy-MM-dd') === slotDateStr && s.startTime === time
+                                    slotDateKey(s.date) === format(day, 'yyyy-MM-dd') && s.startTime === time
                                 );
                                 return (
                                     <div key={time}>
-                                        {renderMobileSlotCard(slot, time, day)}
+                                        {renderMobileSlotCard(slot, time)}
                                     </div>
                                 );
                             })}
@@ -183,9 +183,8 @@ export default function AdminSchedulePage() {
                                 <div key={time} className="grid grid-cols-[80px_repeat(3,1fr)] border-b border-white/5 py-4 items-center">
                                     <div className="text-base font-bold text-slate-300">{time}</div>
                                     {weekDays.map((day) => {
-                                        const slotDateStr = format(day, 'yyyy-MM-dd');
-                                        const slot = slots.find(s =>
-                                            format(new Date(s.date), 'yyyy-MM-dd') === slotDateStr && s.startTime === time
+                                                const slot = slots.find(s =>
+                                            slotDateKey(s.date) === format(day, 'yyyy-MM-dd') && s.startTime === time
                                         );
 
                                         return (

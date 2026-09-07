@@ -1,9 +1,13 @@
-import { NextRequest } from 'next/server';
+import { Prisma } from '@prisma/client';
+import { bookTraining, BookingError } from '@/lib/booking-service';
+import { NextRequest, after } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { errorResponse, successResponse, isSlotFull, canMakeReservation } from '@/lib/helpers';
+import { errorResponse, successResponse } from '@/lib/helpers';
 import { requireAuth } from '@/lib/auth';
 import { validateOrigin } from '@/lib/csrf';
 import { sendBookingNotification } from '@/lib/email';
+
+export const maxDuration = 30;
 
 // GET /api/reservations - Dohvati rezervacije (requires auth)
 export async function GET(request: NextRequest) {
@@ -15,7 +19,7 @@ export async function GET(request: NextRequest) {
         const slotId = searchParams.get('slotId');
         const status = searchParams.get('status');
 
-        const where: any = {};
+        const where: Prisma.ReservationWhereInput = {};
 
         // If not admin, can only see own reservations
         if (session!.role !== 'admin') {
@@ -65,108 +69,19 @@ export async function POST(request: NextRequest) {
             return errorResponse('Možete kreirati rezervacije samo za sebe', 403);
         }
 
-        if (!userId || !slotId) {
-            return errorResponse('userId i slotId su obavezni');
+        if (!Number.isSafeInteger(userId) || userId <= 0 || !Number.isSafeInteger(slotId) || slotId <= 0) {
+            return errorResponse('userId i slotId moraju biti pozitivni cijeli brojevi');
         }
+        const reservation = await bookTraining(prisma, userId, slotId);
 
-        // Check if user exists
-        const user = await prisma.user.findUnique({
-            where: { id: userId },
-        });
-        if (!user) {
-            return errorResponse('Korisnik nije pronađen', 404);
-        }
-
-        // Check if slot exists
-        const slot = await prisma.trainingSlot.findUnique({
-            where: { id: slotId },
-        });
-        if (!slot) {
-            return errorResponse('Termin nije pronađen', 404);
-        }
-
-        // Check if slot is in the past
-        const now = new Date();
-        const slotDateTime = new Date(slot.date);
-        const [hours, minutes] = slot.startTime.split(':').map(Number);
-        slotDateTime.setHours(hours, minutes, 0, 0);
-
-        if (slotDateTime < now) {
-            return errorResponse('Ne možete rezervirati termin koji je već prošao');
-        }
-
-        // Check if reservation is at least 3 hours before training
-        if (!canMakeReservation(slot.date, slot.startTime)) {
-            return errorResponse('Prijava je moguća najkasnije 3 sata prije treninga');
-        }
-
-        // Check if slot is full
-        if (await isSlotFull(slotId)) {
-            return errorResponse('Termin je popunjen');
-        }
-
-        // Check if user already has a reservation for this slot
-        const existingReservation = await prisma.reservation.findUnique({
-            where: {
-                userId_slotId: {
-                    userId,
-                    slotId,
-                },
-            },
-        });
-        if (existingReservation && existingReservation.status === 'active') {
-            return errorResponse('Već imate rezervaciju za ovaj termin');
-        }
-
-        // Create or reactivate reservation
-        let reservation;
-        if (existingReservation) {
-            reservation = await prisma.reservation.update({
-                where: { id: existingReservation.id },
-                data: {
-                    status: 'active',
-                    cancelledAt: null,
-                },
-                include: {
-                    user: {
-                        select: {
-                            id: true,
-                            firstName: true,
-                            lastName: true,
-                            email: true,
-                        },
-                    },
-                    slot: true,
-                },
-            });
-        } else {
-            reservation = await prisma.reservation.create({
-                data: {
-                    userId,
-                    slotId,
-                    status: 'active',
-                },
-                include: {
-                    user: {
-                        select: {
-                            id: true,
-                            firstName: true,
-                            lastName: true,
-                            email: true,
-                        },
-                    },
-                    slot: true,
-                },
-            });
-        }
-
-        // 🔔 Send email notification to admin (must await on Vercel serverless)
+        // Keep notification work alive after the response on Vercel.
         const userName = `${reservation.user.firstName} ${reservation.user.lastName}`;
         const slotTime = `${reservation.slot.startTime} - ${reservation.slot.endTime}`;
-        await sendBookingNotification(userName, reservation.slot.date, slotTime);
+        after(() => sendBookingNotification(userName, reservation.slot.date, slotTime));
 
         return successResponse(reservation, 201);
     } catch (error) {
+        if (error instanceof BookingError) return errorResponse(error.message, error.status);
         console.error('Error creating reservation:', error);
         return errorResponse('Greška pri kreiranju rezervacije', 500);
     }
