@@ -200,7 +200,7 @@ export default function HomePage() {
           </div>
           <div className="border-t border-white/10 pt-6 flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="text-slate-500 text-sm">© 2026 Ellevate. Sva prava pridržana.</div>
-            <a href="mailto:info@ellevate.hr" className="text-slate-300 hover:text-pink-300">Upit za članstvo i cijene</a>
+            <Link href="/pridruzi-se" target="_blank" rel="noopener noreferrer" className="text-slate-300 hover:text-pink-300">Upit za članstvo i cijene</Link>
           </div>
         </div>
       </footer>
