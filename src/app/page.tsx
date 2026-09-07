@@ -34,14 +34,14 @@ export default function HomePage() {
           <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
         </div>
 
-        <div className="relative z-10 px-4 max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-8 lg:gap-16">
+        <div className="relative z-10 w-full px-4 max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-8 lg:gap-16">
           {/* Logo on Left */}
           <div className="w-full max-w-lg lg:w-1/2 flex-shrink-0 text-center">
             <BrandLogo large priority />
           </div>
 
           {/* Text Content on Right */}
-          <div className="text-center lg:text-left">
+          <div className="min-w-0 flex-1 text-center lg:text-left">
             <div className="mb-6 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-sm text-slate-300">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
               Rezervirajte svoj termin treninga
