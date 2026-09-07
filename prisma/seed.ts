@@ -6,7 +6,9 @@ const prisma = new PrismaClient();
 
 const TRAINING_TIMES = [
     { start: '09:00', end: '10:00' },
-    { start: '20:00', end: '21:00' },
+    { start: '18:15', end: '19:15' },
+    { start: '19:15', end: '20:15' },
+    { start: '20:30', end: '21:30' },
 ];
 
 async function main() {
@@ -29,19 +31,21 @@ async function main() {
             firstName: 'Admin',
             lastName: 'Mateazadar',
             role: 'admin',
+            oib: '',
             address: 'Ulica primjera 1, Zadar',
         },
     });
 
     console.log('✅ Admin korisnik kreiran:', admin.email);
 
-    // Počni od ponedjeljka 9. veljače 2026.
-    const startDate = new Date('2026-02-09');
+    // Počni od ponedjeljka 7. rujna 2026.
+    const startDate = new Date('2026-09-07');
+    const trainingDays = [0, 2, 4]; // Ponedjeljak, Srijeda, Petak
 
-    // Kreiraj termine za 4 tjedna unaprijed
-    for (let week = 0; week < 4; week++) {
-        for (let day = 0; day < 5; day++) { // Ponedjeljak do Petak
-            const date = addDays(startDate, week * 7 + day);
+    // Kreiraj termine za 6 tjedana unaprijed
+    for (let week = 0; week < 6; week++) {
+        for (const dayOffset of trainingDays) {
+            const date = addDays(startDate, week * 7 + dayOffset);
 
             for (const time of TRAINING_TIMES) {
                 await prisma.trainingSlot.upsert({
@@ -63,7 +67,7 @@ async function main() {
         }
     }
 
-    console.log('✅ Termini kreirani za sljedeća 4 tjedna (od 9.2.2026.)');
+    console.log('✅ Termini kreirani za ponedjeljak, srijedu i petak (od 7.9.2026.)');
     console.log('🎉 Seeding završen!');
 }
 
