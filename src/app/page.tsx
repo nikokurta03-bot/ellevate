@@ -15,10 +15,7 @@ export default function HomePage() {
             <div className="flex items-center">
               <BrandLogo />
             </div>
-            <div className="flex items-center gap-2 sm:gap-4">
-              <LoginButton className="text-sm text-slate-300 hover:text-white px-2 py-2">Prijava članica</LoginButton>
-              <Link href="/pridruzi-se" target="_blank" rel="noopener noreferrer" className="btn-primary py-2 px-4">Prijavi se</Link>
-            </div>
+            <LoginButton className="btn-primary py-2 px-6">Prijava</LoginButton>
           </div>
         </div>
       </nav>
@@ -60,7 +57,7 @@ export default function HomePage() {
               <Link href="/pridruzi-se" target="_blank" rel="noopener noreferrer"
                   className="btn-primary text-lg px-8 py-4 group"
               >
-                Započni sada
+                Prijava novih članova
                 <span className="ml-2 group-hover:translate-x-1 transition-transform inline-block">→</span>
               </Link>
               <a href="#blog" className="btn-secondary text-lg px-8 py-4">
@@ -168,7 +165,7 @@ export default function HomePage() {
             <Link href="/pridruzi-se" target="_blank" rel="noopener noreferrer"
               className="btn-primary text-lg px-8 py-4"
             >
-              Prijavi se sada
+              Prijava novih članova
             </Link>
           </div>
         </div>
