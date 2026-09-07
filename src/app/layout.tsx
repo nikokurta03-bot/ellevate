@@ -1,3 +1,4 @@
+import WebVitals from '@/components/WebVitals';
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
@@ -26,12 +27,11 @@ export const metadata: Metadata = {
     siteName: "Ellevate",
     locale: "hr_HR",
     type: "website",
-    images: [{ url: 'https://ellevate.hr/og-image.jpg', width: 1200, height: 630, alt: 'Ellevate Fitness Studio' }],
   },
   twitter: {
-    card: "summary_large_image",
+    card: "summary",
     title: "Ellevate Fitness Studio",
-    description: "SaaS za jednostavno upravljanje rezervacijama treninga",
+    description: "Ellevate Fitness Studio — grupni treninzi za žene u Zadru",
   },
 };
 
@@ -43,6 +43,8 @@ export default function RootLayout({
   return (
     <html lang="hr">
       <body className={`${inter.className} min-h-screen gradient-bg`}>
+        <a href="#main-content" className="skip-to-content">Preskoči na sadržaj</a>
+        <WebVitals />
         <AuthProvider>
           <ToastProvider>
             <RouteGuard>

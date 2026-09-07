@@ -35,7 +35,7 @@ export default function UserModal({ isOpen, onClose, onSave, user }: UserModalPr
                 firstName: user.firstName,
                 lastName: user.lastName,
                 oib: user.oib || '',
-                role: user.role as any,
+                role: user.role === 'admin' ? 'admin' : 'user',
                 address: user.address || '',
                 dateOfBirth: user.dateOfBirth ? new Date(user.dateOfBirth).toISOString().split('T')[0] : '',
                 heightCm: user.heightCm || 0,
@@ -90,7 +90,7 @@ export default function UserModal({ isOpen, onClose, onSave, user }: UserModalPr
             } else {
                 setError(result.error);
             }
-        } catch (err) {
+        } catch {
             setError('Greška pri spremanju korisnika');
         } finally {
             setIsLoading(false);

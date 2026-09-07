@@ -41,7 +41,6 @@ export type TrainingSlotWithCount = TrainingSlot & {
             id: number;
             firstName: string;
             lastName: string;
-            email: string;
         };
     })[];
 };

@@ -1,5 +1,6 @@
+import { randomUUID } from 'node:crypto';
 import { Resend } from 'resend';
-import { format } from 'date-fns';
+import { formatInTimeZone } from 'date-fns-tz';
 import { hr } from 'date-fns/locale';
 
 let _resend: Resend | null = null;
@@ -13,11 +14,11 @@ const ADMIN_EMAIL = process.env.ADMIN_NOTIFICATION_EMAIL || 'mateazadar11@gmail.
 const FROM_EMAIL = process.env.EMAIL_FROM || 'Ellevate <onboarding@resend.dev>';
 
 function getDayName(date: Date): string {
-    return format(date, 'EEEE', { locale: hr });
+    return formatInTimeZone(date, 'UTC', 'EEEE', { locale: hr });
 }
 
 function formatDate(date: Date): string {
-    return format(date, 'd. MMMM yyyy.', { locale: hr });
+    return formatInTimeZone(date, 'UTC', 'd. MMMM yyyy.', { locale: hr });
 }
 
 const baseStyle = `
@@ -75,7 +76,7 @@ export async function sendBookingNotification(
     try {
         const resend = getResend();
         if (!resend) return;
-        await resend.emails.send({
+        await sendWithRetry(resend, {
             from: FROM_EMAIL,
             to: ADMIN_EMAIL,
             subject: `✅ Nova prijava: ${userName} — ${slotTime}`,
@@ -101,7 +102,7 @@ export async function sendCancellationNotification(
     try {
         const resend = getResend();
         if (!resend) return;
-        await resend.emails.send({
+        await sendWithRetry(resend, {
             from: FROM_EMAIL,
             to: ADMIN_EMAIL,
             subject: `❌ Otkaz: ${userName} — ${slotTime}`,
@@ -116,5 +117,19 @@ export async function sendCancellationNotification(
         });
     } catch (err) {
         console.error('Failed to send cancellation email:', err);
+    }
+}
+
+async function sendWithRetry(resend: Resend, message: Parameters<Resend['emails']['send']>[0]) {
+    const idempotencyKey = randomUUID();
+    for (let attempt = 0; attempt < 3; attempt++) {
+        try {
+            const result = await resend.emails.send(message, { idempotencyKey });
+            if (!result.error) return;
+            if (attempt === 2) console.error('Notification delivery failed:', result.error.name);
+        } catch (error) {
+            if (attempt === 2) console.error('Notification delivery failed:', error instanceof Error ? error.name : 'Network error');
+        }
+        if (attempt < 2) await new Promise(resolve => setTimeout(resolve, 250 * (attempt + 1)));
     }
 }

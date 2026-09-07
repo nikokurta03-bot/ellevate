@@ -1,13 +1,12 @@
 import { NextResponse } from 'next/server';
-import { prisma } from './prisma';
 import bcrypt from 'bcryptjs';
-import { UserWithoutPassword, CreateUserInput } from '@/types';
 
 // Exclude password from user object
 export function excludePassword<T extends { password: string }>(
     user: T
 ): Omit<T, 'password'> {
-    const { password, ...userWithoutPassword } = user;
+    const { password: _password, ...userWithoutPassword } = user;
+    void _password;
     return userWithoutPassword;
 }
 
@@ -55,43 +54,6 @@ export function validateOIB(oib: string): boolean {
 
     const checkDigit = (11 - sum) % 10;
     return checkDigit === parseInt(oib[10]);
-}
-
-// Check if slot is full
-export async function isSlotFull(slotId: number): Promise<boolean> {
-    const slot = await prisma.trainingSlot.findUnique({
-        where: { id: slotId },
-        include: {
-            _count: {
-                select: {
-                    reservations: {
-                        where: { status: 'active' }
-                    }
-                }
-            }
-        }
-    });
-
-    if (!slot) return true;
-    return slot._count.reservations >= slot.maxCapacity;
-}
-
-// Check if user can cancel or signup for reservation (3 hours before)
-export function canCancelReservation(slotDate: Date, startTime: string): boolean {
-    const now = new Date();
-    const [hours, minutes] = startTime.split(':').map(Number);
-
-    const slotDateTime = new Date(slotDate);
-    slotDateTime.setHours(hours, minutes, 0, 0);
-
-    const threeHoursBefore = new Date(slotDateTime.getTime() - 3 * 60 * 60 * 1000);
-
-    return now < threeHoursBefore;
-}
-
-// Check if user can make a reservation (3 hours before training)
-export function canMakeReservation(slotDate: Date, startTime: string): boolean {
-    return canCancelReservation(slotDate, startTime);
 }
 
 // Get day name in Croatian

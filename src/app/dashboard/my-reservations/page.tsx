@@ -1,10 +1,11 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import UserNav from '@/components/UserNav';
 import { useAuth } from '@/context/AuthContext';
 import { ApiResponse, ReservationWithDetails } from '@/types';
-import { format } from 'date-fns';
+import { canCancelReservation } from '@/lib/booking-time';
+import { formatInTimeZone } from 'date-fns-tz';
 import { hr } from 'date-fns/locale';
 import { useToast } from '@/components/Toasts';
 
@@ -14,7 +15,7 @@ export default function MyReservationsPage() {
     const [reservations, setReservations] = useState<ReservationWithDetails[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
-    const fetchReservations = async () => {
+    const fetchReservations = useCallback(async () => {
         if (!user) return;
         setIsLoading(true);
         try {
@@ -28,18 +29,18 @@ export default function MyReservationsPage() {
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [user]);
 
     useEffect(() => {
         fetchReservations();
-    }, [user]);
+    }, [fetchReservations]);
 
     const handleCancel = async (id: number) => {
         if (!confirm('Jeste li sigurni da želite otkazati ovu rezervaciju?')) return;
 
         try {
             const response = await fetch(`/api/reservations/${id}`, { method: 'DELETE' });
-            const result: ApiResponse<any> = await response.json();
+            const result: ApiResponse<unknown> = await response.json();
             if (!result.success) {
                 error(result.error || 'Greška pri otkazivanju');
                 return;
@@ -47,7 +48,7 @@ export default function MyReservationsPage() {
 
             success('Rezervacija otkazana');
             fetchReservations();
-        } catch (err) {
+        } catch {
             error('Greška pri otkazivanju');
         }
     };
@@ -56,7 +57,7 @@ export default function MyReservationsPage() {
         <div className="min-h-screen">
             <UserNav />
 
-            <main className="p-6 max-w-4xl mx-auto animate-fade-in">
+            <main id="main-content" tabIndex={-1} className="p-6 max-w-4xl mx-auto animate-fade-in">
                 <header className="mb-8">
                     <h1 className="text-3xl font-bold mb-2">Moje rezervacije</h1>
                     <p className="text-slate-400">Pregled svih vaših prijava na treninge</p>
@@ -73,8 +74,8 @@ export default function MyReservationsPage() {
                                 }`}>
                                 <div className="flex items-center gap-6 w-full md:w-auto">
                                     <div className="bg-pink-300/20 p-4 rounded-2xl text-center min-w-[100px]">
-                                        <p className="text-xs font-bold text-pink-300 uppercase">{format(new Date(res.slot.date), 'EEE', { locale: hr })}</p>
-                                        <p className="text-2xl font-bold">{format(new Date(res.slot.date), 'd.M.')}</p>
+                                        <p className="text-xs font-bold text-pink-300 uppercase">{formatInTimeZone(new Date(res.slot.date), 'UTC', 'EEE', { locale: hr })}</p>
+                                        <p className="text-2xl font-bold">{formatInTimeZone(new Date(res.slot.date), 'UTC', 'd.M.')}</p>
                                     </div>
 
                                     <div>
@@ -92,15 +93,16 @@ export default function MyReservationsPage() {
                                 <div className="w-full md:w-auto">
                                     {res.status === 'active' && (
                                         <button
+                                            disabled={!canCancelReservation(res.slot.date, res.slot.startTime)}
                                             onClick={() => handleCancel(res.id)}
                                             className="btn-danger w-full md:w-auto"
                                         >
-                                            Otkaži trening
+                                            {canCancelReservation(res.slot.date, res.slot.startTime) ? 'Otkaži trening' : 'Otkazivanje zatvoreno'}
                                         </button>
                                     )}
                                     {res.status === 'cancelled' && (
                                         <div className="text-slate-500 text-sm italic">
-                                            Otkazano {res.cancelledAt ? format(new Date(res.cancelledAt), 'd.M. HH:mm') : ''}
+                                            Otkazano {res.cancelledAt ? formatInTimeZone(new Date(res.cancelledAt), 'Europe/Zagreb', 'd.M. HH:mm') : ''}
                                         </div>
                                     )}
                                 </div>

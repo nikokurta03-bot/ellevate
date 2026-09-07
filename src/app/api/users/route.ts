@@ -1,3 +1,4 @@
+import { Prisma } from '@prisma/client';
 import { NextRequest } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { excludePassword, errorResponse, successResponse, hashPassword, validateOIB } from '@/lib/helpers';
@@ -14,7 +15,7 @@ export async function GET(request: NextRequest) {
         const role = searchParams.get('role');
         const search = searchParams.get('search');
 
-        const where: any = {};
+        const where: Prisma.UserWhereInput = {};
 
         if (role) {
             where.role = role;

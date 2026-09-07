@@ -1,8 +1,9 @@
 'use client';
 
+import BrandLogo from '@/components/BrandLogo';
+
 import React, { useState } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 
@@ -34,7 +35,7 @@ export default function AppNav({ items, homeHref, roleLabel, menuTitle = 'Menu' 
             <nav className="glass sticky top-0 z-50 px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between border-b border-white/10">
                 <div className="flex items-center gap-4 sm:gap-8">
                     <Link href={homeHref} className="flex items-center">
-                        <Image src="/ellevate_logo.png" alt="Ellevate" width={140} height={40} className="h-8 sm:h-10 w-auto" priority />
+                        <BrandLogo />
                     </Link>
                     <div className="hidden md:flex items-center gap-4">
                         {items.map((item) => (
@@ -62,6 +63,8 @@ export default function AppNav({ items, homeHref, roleLabel, menuTitle = 'Menu' 
                         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                         className="md:hidden p-2 rounded-xl hover:bg-white/10 transition-colors"
                         aria-label="Otvori menu"
+                        aria-expanded={isMobileMenuOpen}
+                        aria-controls="mobile-menu"
                     >
                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             {isMobileMenuOpen ? (
@@ -78,7 +81,7 @@ export default function AppNav({ items, homeHref, roleLabel, menuTitle = 'Menu' 
                 <div className="fixed inset-0 bg-black/60 z-40 md:hidden" onClick={() => setIsMobileMenuOpen(false)} />
             )}
 
-            <div className={`fixed top-0 right-0 h-full w-72 bg-slate-900 border-l border-white/10 z-50 transform transition-transform duration-300 ease-in-out md:hidden ${isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+            <div id="mobile-menu" inert={!isMobileMenuOpen} className={`fixed top-0 right-0 h-full w-72 bg-slate-900 border-l border-white/10 z-50 transform transition-transform duration-300 ease-in-out md:hidden ${isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
                 <div className="p-6">
                     <div className="flex justify-between items-center mb-8">
                         <span className="text-lg font-bold gradient-text">{menuTitle}</span>

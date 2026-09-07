@@ -60,7 +60,7 @@ export default function UsersPage() {
                 success('Korisnik obrisan');
                 fetchUsers();
             }
-        } catch (err) {
+        } catch {
             error('Greška pri brisanju korisnika');
         }
     };
@@ -69,7 +69,7 @@ export default function UsersPage() {
         <div className="min-h-screen">
             <AdminNav />
 
-            <main className="p-4 sm:p-6 max-w-7xl mx-auto animate-fade-in">
+            <main id="main-content" tabIndex={-1} className="p-4 sm:p-6 max-w-7xl mx-auto animate-fade-in">
                 <header className="flex flex-col gap-4 mb-6 sm:mb-8">
                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                         <div>

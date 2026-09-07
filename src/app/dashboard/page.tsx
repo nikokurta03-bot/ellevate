@@ -3,8 +3,9 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import UserNav from '@/components/UserNav';
 import { useAuth } from '@/context/AuthContext';
-import { ApiResponse, TrainingSlotWithCount } from '@/types';
-import { format, startOfWeek, addDays, addWeeks, isAfter, isBefore, addHours } from 'date-fns';
+import { TrainingSlotWithCount } from '@/types';
+import { format, startOfWeek, addDays, addWeeks } from 'date-fns';
+import { BOOKING_RULES, canMakeReservation, canCancelReservation, trainingStart, bookingDeadlineLabel, slotDateKey, studioDateKey } from '@/lib/booking-time';
 import { hr } from 'date-fns/locale';
 import { useToast } from '@/components/Toasts';
 
@@ -15,10 +16,16 @@ export default function Dashboard() {
     const [userReservations, setUserReservations] = useState<number[]>([]);
     const [weekOffset, setWeekOffset] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
+    const [clock, setClock] = useState(() => new Date());
+    useEffect(() => {
+        const timer = setInterval(() => setClock(new Date()), 1000);
+        return () => clearInterval(timer);
+    }, []);
     const [actionLoading, setActionLoading] = useState<number | null>(null);
 
     // 🚀 OPTIMIZACIJA: Memoizirani izračuni datuma
-    const weekStart = useMemo(() => startOfWeek(addWeeks(new Date(), weekOffset), { weekStartsOn: 1 }), [weekOffset]);
+    const todayInZagreb = studioDateKey(clock);
+    const weekStart = useMemo(() => startOfWeek(addWeeks(new Date(`${todayInZagreb}T12:00:00`), weekOffset), { weekStartsOn: 1 }), [weekOffset, todayInZagreb]);
     // Only Monday (0), Wednesday (2), Friday (4) - skip Tuesday and Thursday
     const weekDays = useMemo(() => [0, 2, 4].map((dayOffset) => addDays(weekStart, dayOffset)), [weekStart]);
     const timeRows = useMemo(() => ['09:00', '18:15', '19:15', '20:30'], []);
@@ -46,7 +53,7 @@ export default function Dashboard() {
             }
 
             if (user && resData?.success) {
-                setUserReservations(resData.data.map((r: any) => r.slotId));
+                setUserReservations(resData.data.map((r: { slotId: number }) => r.slotId));
             }
         } catch (err) {
             console.error('Failed to fetch user dashboard data', err);
@@ -99,25 +106,25 @@ export default function Dashboard() {
                     error(bookResult.error || 'Greška pri rezervaciji');
                 }
             }
-        } catch (err) {
+        } catch {
             error('Došlo je do greške.');
         } finally {
             setActionLoading(null);
         }
-    }, [user, userReservations, fetchData]);
+    }, [user, userReservations, fetchData, success, error]);
 
     return (
         <div className="min-h-screen">
             <UserNav />
 
-            <main className="p-4 sm:p-6 max-w-7xl mx-auto animate-fade-in">
+            <main id="main-content" tabIndex={-1} className="p-4 sm:p-6 max-w-7xl mx-auto animate-fade-in">
                 <header className="mb-6 sm:mb-12">
                     <div className="flex flex-col gap-4 sm:gap-6">
                         <div>
                             <h1 className="text-2xl sm:text-4xl font-bold mb-2">Rezervirajte svoj termin</h1>
                             <p className="text-slate-400 text-sm sm:text-base max-w-lg">
                                 Odaberite željeni termin za trening. Maksimalno 8 osoba po grupi.
-                                Prijava i otkazivanje moguće najkasnije 3 sata prije početka.
+                                {BOOKING_RULES}
                             </p>
                         </div>
 
@@ -127,10 +134,12 @@ export default function Dashboard() {
                                 <button
                                     onClick={() => setWeekOffset(prev => Math.max(0, prev - 1))}
                                     disabled={weekOffset === 0}
+                                    aria-label="Prethodni tjedan"
                                     className="btn-secondary flex-1 sm:flex-none px-4 py-3 sm:py-2 disabled:opacity-20 text-lg sm:text-base"
                                 > ← </button>
                                 <button
                                     onClick={() => setWeekOffset(prev => prev + 1)}
+                                    aria-label="Sljedeći tjedan"
                                     className="btn-secondary flex-1 sm:flex-none px-4 py-3 sm:py-2 text-lg sm:text-base"
                                 > → </button>
                             </div>
@@ -141,6 +150,7 @@ export default function Dashboard() {
                     </div>
                 </header>
 
+                {isLoading && <p role="status" className="mb-4 text-slate-300">Učitavanje termina...</p>}
                 {/* Mobile: Vertical list layout, Desktop: 5-column grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
                     {weekDays.map((day) => (
@@ -154,11 +164,12 @@ export default function Dashboard() {
                                 {timeRows.map((time) => {
                                     const slotDateStr = format(day, 'yyyy-MM-dd');
                                     const slot = slots.find(s =>
-                                        format(new Date(s.date), 'yyyy-MM-dd') === slotDateStr && s.startTime === time
+                                        slotDateKey(s.date) === slotDateStr && s.startTime === time
                                     );
                                     const isBooked = slot ? userReservations.includes(slot.id) : false;
                                     const isFull = slot ? slot.currentCount >= slot.maxCapacity : false;
-                                    const isPast = slot ? new Date(`${slotDateStr}T${time}`) < new Date() : true;
+                                    const isPast = slot ? trainingStart(slot.date, time) < clock : true;
+                                    const deadlinePassed = slot ? !(isBooked ? canCancelReservation(slot.date, time, clock) : canMakeReservation(slot.date, time, clock)) : true;
 
                                     return (
                                         <div key={time} className={`glass-card p-4 flex flex-col gap-3 border ${isBooked ? 'border-pink-300/40 bg-pink-300/5' : ''
@@ -166,7 +177,7 @@ export default function Dashboard() {
                                             <div className="flex justify-between items-center">
                                                 <span className="text-lg sm:text-xl font-bold">{time}</span>
                                                 {slot && (
-                                                    <span className={`text-[10px] sm:text-xs px-2 py-0.5 rounded-full font-bold uppercase tracking-tighter ${isFull ? 'bg-red-500/20 text-red-400' : 'bg-emerald-500/20 text-emerald-400'
+                                                    <span className={`text-xs sm:text-xs px-2 py-0.5 rounded-full font-bold uppercase tracking-tighter ${isFull ? 'bg-red-500/20 text-red-400' : 'bg-emerald-500/20 text-emerald-400'
                                                         }`}>
                                                         {slot.currentCount}/{slot.maxCapacity} MJESTA
                                                     </span>
@@ -176,36 +187,39 @@ export default function Dashboard() {
                                             {/* Prikaz rezerviranih korisnika */}
                                             {slot && slot.reservations && slot.reservations.length > 0 && (
                                                 <div className="border-t border-white/10 pt-2">
-                                                    <p className="text-[10px] text-slate-500 uppercase tracking-wider mb-1">Prijavljeni:</p>
+                                                    <p className="text-xs text-slate-500 uppercase tracking-wider mb-1">Prijavljeni:</p>
                                                     <div className="flex flex-wrap gap-1">
                                                         {slot.reservations.map((res) => (
                                                             <span
                                                                 key={res.id}
-                                                                className={`text-[10px] px-2 py-0.5 rounded-full ${user && res.user.id === user.id
+                                                                className={`text-xs px-2 py-0.5 rounded-full ${user && res.user.id === user.id
                                                                     ? 'bg-pink-300/30 text-pink-300 font-semibold'
                                                                     : 'bg-white/5 text-slate-400'
                                                                     }`}
                                                             >
-                                                                {res.user.firstName} {res.user.lastName.charAt(0)}.
+                                                                {res.user.firstName} {res.user.lastName}
                                                             </span>
                                                         ))}
                                                     </div>
                                                 </div>
                                             )}
 
+                                            {slot && <p className="text-xs text-slate-300">Prijava do {bookingDeadlineLabel(slot.date, slot.startTime)} (Zagreb)</p>}
                                             {slot ? (
                                                 <button
                                                     onClick={() => handleBooking(slot.id)}
-                                                    disabled={actionLoading === slot.id || (isFull && !isBooked)}
+                                                    disabled={actionLoading !== null || deadlinePassed || (isFull && !isBooked)}
                                                     className={`w-full py-3 sm:py-2 rounded-xl text-sm font-bold transition-all min-h-[44px] ${isBooked
                                                         ? 'bg-red-500/10 text-red-500 hover:bg-red-500/20 border border-red-500/20'
                                                         : isFull
                                                             ? 'bg-slate-800 text-slate-500 cursor-not-allowed'
-                                                            : 'bg-pink-400 text-white hover:bg-pink-300 shadow-lg shadow-pink-300/20'
+                                                            : 'bg-pink-400 text-gray-900 hover:bg-pink-300 shadow-lg shadow-pink-300/20'
                                                         }`}
                                                 >
                                                     {actionLoading === slot.id
                                                         ? 'Učitavanje...'
+                                                        : deadlinePassed
+                                                            ? (isBooked ? 'Otkazivanje zatvoreno' : 'Prijave zatvorene')
                                                         : isBooked
                                                             ? 'Otkaži rezervaciju'
                                                             : isFull

@@ -42,13 +42,13 @@ export const ToastProvider = ({ children }: { children: ReactNode }) => {
         }, 4000);
     }, [removeToast]);
 
-    const success = (message: string) => addToast(message, 'success');
-    const error = (message: string) => addToast(message, 'error');
+    const success = useCallback((message: string) => addToast(message, 'success'), [addToast]);
+    const error = useCallback((message: string) => addToast(message, 'error'), [addToast]);
 
     return (
         <ToastContext.Provider value={{ toast: addToast, success, error }}>
             {children}
-            <div className="fixed bottom-4 right-4 z-[9999] flex flex-col gap-2 pointer-events-none">
+            <div role="status" aria-live="polite" className="fixed bottom-4 right-4 z-[9999] flex flex-col gap-2 pointer-events-none">
                 {toasts.map((t) => (
                     <div
                         key={t.id}

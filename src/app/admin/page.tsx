@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import AdminNav from '@/components/AdminNav';
-import { StatCardSkeleton, SlotCardSkeleton } from '@/components/Skeleton';
+import { StatCardSkeleton } from '@/components/Skeleton';
 import { ApiResponse, TrainingSlotWithCount } from '@/types';
 import { format } from 'date-fns';
 import { hr } from 'date-fns/locale';
@@ -53,7 +53,7 @@ export default function AdminDashboard() {
         <div className="min-h-screen">
             <AdminNav />
 
-            <main className="p-4 sm:p-6 max-w-7xl mx-auto">
+            <main id="main-content" tabIndex={-1} className="p-4 sm:p-6 max-w-7xl mx-auto">
                 <header className="mb-6 sm:mb-8 animate-fade-in">
                     <h1 className="text-2xl sm:text-3xl font-bold mb-2">Dobrodošli natrag, Admin</h1>
                     <p className="text-slate-400 text-sm sm:text-base">Pregled aktivnosti za {formattedDate}</p>
