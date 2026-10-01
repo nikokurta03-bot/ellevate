@@ -114,14 +114,12 @@ export default function UsersPage() {
                                         {user.heightCm ? `${user.heightCm}cm` : '-'} / {user.weightKg ? `${user.weightKg}kg` : '-'}
                                     </div>
                                     <div className="flex gap-2">
-                                        {user.role === 'user' && (
-                                            <Link
-                                                href={`/admin/nutrition?user=${user.id}`}
-                                                className="flex-1 py-2 px-2 bg-pink-400/10 hover:bg-pink-400/20 text-pink-200 rounded-xl text-center text-sm font-medium transition-colors"
-                                            >
-                                                Prehrana
-                                            </Link>
-                                        )}
+                                        <Link
+                                            href={`/admin/nutrition?user=${user.id}`}
+                                            className="flex-1 py-2 px-2 bg-pink-400/10 hover:bg-pink-400/20 text-pink-200 rounded-xl text-center text-sm font-medium transition-colors"
+                                        >
+                                            Prehrana
+                                        </Link>
                                         <button
                                             onClick={() => handleEdit(user)}
                                             className="flex-1 py-2 px-4 bg-white/5 hover:bg-white/10 rounded-xl text-sm font-medium transition-colors"
@@ -180,14 +178,12 @@ export default function UsersPage() {
                                             </td>
                                             <td className="py-4 text-right">
                                                 <div className="flex justify-end gap-2">
-                                                    {user.role === 'user' && (
-                                                        <Link
-                                                            href={`/admin/nutrition?user=${user.id}`}
-                                                            className="p-2 hover:bg-pink-400/10 rounded-lg text-pink-200 transition-colors"
-                                                        >
-                                                            Prehrana
-                                                        </Link>
-                                                    )}
+                                                    <Link
+                                                        href={`/admin/nutrition?user=${user.id}`}
+                                                        className="p-2 hover:bg-pink-400/10 rounded-lg text-pink-200 transition-colors"
+                                                    >
+                                                        Prehrana
+                                                    </Link>
                                                     <button
                                                         onClick={() => handleEdit(user)}
                                                         className="p-2 hover:bg-white/10 rounded-lg text-slate-400 hover:text-white transition-colors"
