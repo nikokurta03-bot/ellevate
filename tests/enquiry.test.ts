@@ -40,6 +40,7 @@ test('burst limit applies across requests and expires', () => {
 
 test('delivery uses confirmed recipient, preserves idempotency and rejects provider failure', async (t) => {
     process.env.RESEND_API_KEY = 're_unit_test_only';
+    process.env.EMAIL_FROM = 'Ellevate <info@ellevate.hr>';
     const requests: { body: Record<string, unknown>; headers: Headers }[] = [];
     let providerFails = false;
     t.mock.method(globalThis, 'fetch', async (_url: unknown, options: RequestInit) => {
@@ -51,11 +52,13 @@ test('delivery uses confirmed recipient, preserves idempotency and rejects provi
     const { sendMembershipEnquiry } = await import('../src/lib/email');
     const enquiry = parseEnquiry(input)!;
     await sendMembershipEnquiry(enquiry);
-    assert.equal(requests[0].body.to, 'mateazadar11@gmail.com');
+    assert.equal(requests[0].body.to, 'info@ellevate.hr');
+    assert.equal(requests[0].body.from, 'Ellevate <info@ellevate.hr>');
     assert.equal(requests[0].body.reply_to, 'ana@example.com');
     assert.equal(requests[0].headers.get('idempotency-key'), `membership-enquiry/${input.requestId}`);
     providerFails = true;
     await assert.rejects(sendMembershipEnquiry(enquiry), /did not accept/);
     delete process.env.RESEND_API_KEY;
     await assert.rejects(sendMembershipEnquiry(enquiry), /not configured/);
+    delete process.env.EMAIL_FROM;
 });
