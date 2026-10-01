@@ -25,8 +25,7 @@ export default async function AdminNutritionPage({ searchParams }: { searchParam
     if (administrator?.role !== 'admin') redirect('/dashboard');
 
     const users = await prisma.user.findMany({
-        where: { role: 'user' },
-        select: { id: true, firstName: true, lastName: true, email: true },
+        select: { id: true, firstName: true, lastName: true, email: true, role: true },
         orderBy: [{ firstName: 'asc' }, { lastName: 'asc' }],
     });
     const params = await searchParams;
@@ -46,11 +45,11 @@ export default async function AdminNutritionPage({ searchParams }: { searchParam
                 </header>
 
                 <div className="grid gap-6 lg:grid-cols-[18rem_minmax(0,1fr)]">
-                    <aside className="glass-card h-fit" aria-label="Odabir korisnice">
-                        <h2 className="font-semibold">Korisnice <span className="text-slate-400">({users.length})</span></h2>
-                        <p className="mt-1 text-xs text-slate-400">Odaberite korisnicu za pregled predložaka.</p>
+                    <aside className="glass-card h-fit" aria-label="Odabir računa">
+                        <h2 className="font-semibold">Računi <span className="text-slate-400">({users.length})</span></h2>
+                        <p className="mt-1 text-xs text-slate-400">Odaberite članicu ili administratoricu za pregled predložaka.</p>
                         {users.length === 0 ? (
-                            <p className="mt-5 text-sm text-slate-400">Nema korisnica u sustavu.</p>
+                            <p className="mt-5 text-sm text-slate-400">Nema računa u sustavu.</p>
                         ) : (
                             <div className="mt-4 max-h-[32rem] space-y-2 overflow-y-auto">
                                 {users.map((user) => (
@@ -60,7 +59,7 @@ export default async function AdminNutritionPage({ searchParams }: { searchParam
                                         aria-current={selectedUser?.id === user.id ? 'page' : undefined}
                                         className={`block rounded-xl px-3 py-3 transition-colors ${selectedUser?.id === user.id ? 'bg-pink-400/20 text-white ring-1 ring-pink-300/50' : 'bg-white/5 text-slate-300 hover:bg-white/10'}`}
                                     >
-                                        <span className="block font-medium">{user.firstName} {user.lastName}</span>
+                                        <span className="block font-medium">{user.firstName} {user.lastName}{user.role === 'admin' ? ' · Admin' : ''}</span>
                                         <span className="block truncate text-xs text-slate-400">{user.email}</span>
                                     </Link>
                                 ))}
