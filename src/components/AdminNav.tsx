@@ -5,6 +5,7 @@ import AppNav from './AppNav';
 const navItems = [
     { label: 'Dashboard', href: '/admin' },
     { label: 'Korisnici', href: '/admin/users' },
+    { label: 'Prehrana', href: '/admin/nutrition' },
     { label: 'Raspored', href: '/admin/schedule' },
 ];
 

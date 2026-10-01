@@ -9,13 +9,15 @@ test('public pages remain accessible without a session', () => {
   }
 });
 test('private routes redirect signed-out visitors', () => {
-  for (const path of ['/admin', '/admin/users', '/dashboard', '/dashboard/my-reservations']) {
+  for (const path of ['/admin', '/admin/users', '/admin/nutrition', '/dashboard', '/dashboard/my-reservations']) {
     assert.equal(isProtectedRoute(path), true);
     assert.equal(routeRedirect(path, null), '/');
   }
 });
 test('role-specific destinations remain protected', () => {
   assert.equal(routeRedirect('/admin/users', 'user'), '/dashboard');
+  assert.equal(routeRedirect('/admin/nutrition', 'user'), '/dashboard');
+  assert.equal(routeRedirect('/admin/nutrition', 'admin'), null);
   assert.equal(routeRedirect('/dashboard/my-reservations', 'admin'), '/admin');
   assert.equal(routeRedirect('/admin', 'admin'), null);
   assert.equal(routeRedirect('/dashboard', 'user'), null);
