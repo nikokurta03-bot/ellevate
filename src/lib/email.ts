@@ -138,10 +138,11 @@ export async function sendMembershipEnquiry(enquiry: import('./enquiry').Enquiry
     const { enquiryMessage } = await import('./enquiry');
     const resend = getResend();
     if (!resend) throw new Error('Mail service not configured');
+    if (!process.env.EMAIL_FROM) throw new Error('Verified sender not configured');
     const result = await resend.emails.send({
         ...enquiryMessage(enquiry),
-        from: FROM_EMAIL,
-        to: 'mateazadar11@gmail.com',
+        from: process.env.EMAIL_FROM,
+        to: 'info@ellevate.hr',
     }, { idempotencyKey: `membership-enquiry/${enquiry.requestId}` });
     if (result.error || !result.data?.id) throw new Error('Mail service did not accept enquiry');
 }
