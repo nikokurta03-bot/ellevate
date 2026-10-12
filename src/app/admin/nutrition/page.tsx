@@ -3,7 +3,9 @@ import Link from 'next/link';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import AdminNav from '@/components/AdminNav';
+import NutritionMenuEditor from '@/components/NutritionMenuEditor';
 import { COOKIE_NAME, verifyToken } from '@/lib/auth';
+import { parseNutritionDays } from '@/lib/nutrition';
 import { prisma } from '@/lib/prisma';
 import { nutritionMenus } from '@/data/nutrition-menus';
 
@@ -33,6 +35,11 @@ export default async function AdminNutritionPage({ searchParams }: { searchParam
     const selectedUser = users.find((user) => user.id === requestedId) ?? users[0];
     const selectedPlan = params.plan === 'carnivore' ? 'carnivore' : 'keto';
     const menu = nutritionMenus[selectedPlan];
+    const savedMenu = selectedUser ? await prisma.nutritionMenu.findUnique({
+        where: { userId_plan: { userId: selectedUser.id, plan: selectedPlan } },
+        select: { days: true },
+    }) : null;
+    const customizedDays = savedMenu ? parseNutritionDays(savedMenu.days) : null;
 
     return (
         <div className="min-h-screen">
@@ -72,7 +79,7 @@ export default async function AdminNutritionPage({ searchParams }: { searchParam
                             <div className="glass-card mb-5">
                                 <p className="text-xs font-semibold uppercase tracking-widest text-pink-300">Pregled korisnice</p>
                                 <h2 className="mt-2 text-xl font-bold">{selectedUser.firstName} {selectedUser.lastName}</h2>
-                                <p className="mt-1 text-sm text-slate-400">Oba jelovnika su jednaki generički predlošci za sve korisnice; nisu prilagođeni zdravstvenom stanju, potrebama ni ciljevima ove osobe.</p>
+                                <p className="mt-1 text-sm text-slate-400">Svaki račun počinje s istim generičkim predlošcima. Izmjene se spremaju samo za odabrani račun i vrstu jelovnika.</p>
                                 <div className="mt-5 flex flex-wrap gap-2" aria-label="Vrsta jelovnika">
                                     {(['keto', 'carnivore'] as const).map((plan) => (
                                         <Link
@@ -88,7 +95,7 @@ export default async function AdminNutritionPage({ searchParams }: { searchParam
                             </div>
 
                             <div className="mb-5 rounded-2xl border border-amber-300/30 bg-amber-300/10 p-4 text-sm text-amber-100">
-                                <p className="font-semibold">Radni predložak, nije individualni plan prehrane</p>
+                                <p className="font-semibold">Radni jelovnik, nije stručna procjena prehrane</p>
                                 <p className="mt-1">Keto i osobito carnivore prehrana mogu biti neprikladne za neke osobe. Prije primjene ili dijeljenja jelovnika s korisnicom potrebna je procjena liječnika ili kvalificiranog nutricionista/dijetetičara. Količine i kalorije namjerno nisu zadane.</p>
                             </div>
 
@@ -96,18 +103,13 @@ export default async function AdminNutritionPage({ searchParams }: { searchParam
                                 <h2 className="text-xl font-bold">{menu.title}</h2>
                                 <p className="mt-1 text-sm text-slate-400">{menu.description}</p>
                             </div>
-                            <div className="grid gap-4 md:grid-cols-2">
-                                {menu.days.map((day) => (
-                                    <article key={day.day} className="glass-card">
-                                        <h3 className="mb-4 border-b border-white/10 pb-3 text-lg font-semibold text-pink-200">{day.day}</h3>
-                                        <dl className="space-y-3 text-sm">
-                                            <div><dt className="font-semibold text-slate-400">Doručak</dt><dd className="mt-1">{day.breakfast}</dd></div>
-                                            <div><dt className="font-semibold text-slate-400">Ručak</dt><dd className="mt-1">{day.lunch}</dd></div>
-                                            <div><dt className="font-semibold text-slate-400">Večera</dt><dd className="mt-1">{day.dinner}</dd></div>
-                                        </dl>
-                                    </article>
-                                ))}
-                            </div>
+                            <NutritionMenuEditor
+                                key={`${selectedUser.id}-${selectedPlan}`}
+                                userId={selectedUser.id}
+                                plan={selectedPlan}
+                                initialDays={customizedDays ?? menu.days}
+                                customized={Boolean(customizedDays)}
+                            />
                         </section>
                     )}
                 </div>
