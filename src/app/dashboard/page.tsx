@@ -28,7 +28,7 @@ export default function Dashboard() {
     const weekStart = useMemo(() => startOfWeek(addWeeks(new Date(`${todayInZagreb}T12:00:00`), weekOffset), { weekStartsOn: 1 }), [weekOffset, todayInZagreb]);
     // Only Monday (0), Wednesday (2), Friday (4) - skip Tuesday and Thursday
     const weekDays = useMemo(() => [0, 2, 4].map((dayOffset) => addDays(weekStart, dayOffset)), [weekStart]);
-    const timeRows = useMemo(() => ['09:00', '18:15', '19:20', '20:30'], []);
+    const timeRows = useMemo(() => Array.from(new Set(['09:00', '18:15', '19:20', '20:30', ...slots.map(slot => slot.startTime)])).sort(), [slots]);
 
     // 🚀 OPTIMIZACIJA: useCallback za stabilnu referencu
     const fetchData = useCallback(async () => {
