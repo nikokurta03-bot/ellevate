@@ -72,7 +72,7 @@ function LoginDialog({ onClose }: { onClose: () => void }) {
 
   return (
     <dialog ref={dialog} onCancel={onClose} aria-labelledby="login-title"
-      className="m-auto w-[calc(100%-2rem)] max-w-md max-h-[90dvh] overflow-y-auto rounded-2xl border border-white/10 bg-[#17101d] p-6 text-slate-100 backdrop:bg-black/60">
+      className="m-auto w-[calc(100%_-_2rem)] max-w-md max-h-[90dvh] overflow-y-auto rounded-2xl border border-white/10 bg-[#17101d] p-6 text-slate-100 backdrop:bg-black/60">
       <button type="button" onClick={onClose} aria-label="Zatvori prijavu" className="absolute top-2 right-2 h-11 w-11 text-slate-400 hover:text-white">✕</button>
       <div className="text-center mb-6 mt-4">
         <h2 id="login-title" className="text-2xl font-bold">Dobrodošli natrag</h2>

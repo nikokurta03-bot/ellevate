@@ -12,9 +12,9 @@ export default function JoinPage() {
     return (
         <div className="min-h-screen">
             <nav className="glass border-b border-white/10">
-                <div className="max-w-5xl mx-auto px-4 h-20 flex items-center justify-between">
+                <div className="max-w-5xl mx-auto px-4 min-h-20 py-3 flex flex-wrap gap-3 items-center justify-between">
                     <Link href="/" aria-label="Ellevate — početna"><BrandLogo /></Link>
-                    <Link href="/" className="btn-secondary py-2">Povratak na početnu</Link>
+                    <Link href="/" className="btn-secondary py-2 text-sm">Povratak na početnu</Link>
                 </div>
             </nav>
             <main id="main-content" tabIndex={-1} className="max-w-2xl mx-auto px-4 py-10 sm:py-16">
