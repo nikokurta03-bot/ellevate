@@ -8,17 +8,18 @@ import RouteGuard from "@/components/RouteGuard";
 
 // 🚀 OPTIMIZACIJA: display swap sprječava FOIT (Flash of Invisible Text)
 const inter = Inter({
-  subsets: ["latin"],
+  subsets: ["latin", "latin-ext"],
   display: 'swap',
   preload: true,
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://www.ellevate.hr"),
   title: {
-    default: "Ellevate - Rezervacije Grupnih Treninga",
+    default: "Grupni treninzi za žene u Zadru | Ellevate",
     template: "%s | Ellevate"
   },
-  description: "Ekskluzivni studio za treninge snage i oblikovanja tijela. Jednostavno upravljanje uslugama i rezervacijama.",
+  description: "Grupni treninzi snage i oblikovanja tijela za žene u Zadru. Male grupe do 8 polaznica, podrška zajednice i jednostavna rezervacija termina.",
   keywords: ["trening", "fitness", "rezervacije", "snaga", "oblikovanje tijela"],
   openGraph: {
     title: "Ellevate Fitness Studio",
