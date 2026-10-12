@@ -22,7 +22,7 @@ export default function HomePage() {
 
       <main id="main-content" tabIndex={-1}>
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
+      <section className="relative min-h-[100svh] flex items-center justify-center overflow-hidden pt-24 pb-12 lg:py-24">
         {/* Animated background */}
         <div className="absolute inset-0 bg-gradient-to-br from-gray-950 via-pink-950/50 to-pink-950/30" />
         <div className="absolute inset-0">
@@ -32,7 +32,7 @@ export default function HomePage() {
 
         <div className="relative z-10 w-full px-4 max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-8 lg:gap-16">
           {/* Logo on Left */}
-          <div className="w-full max-w-lg lg:w-1/2 flex-shrink-0 text-center">
+          <div className="w-full max-w-[220px] sm:max-w-sm lg:max-w-lg lg:w-1/2 flex-shrink-0 text-center">
             <BrandLogo large priority />
           </div>
 
@@ -40,37 +40,41 @@ export default function HomePage() {
           <div className="min-w-0 flex-1 text-center lg:text-left">
             <div className="mb-6 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-sm text-slate-300">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              Rezervirajte svoj termin treninga
+              Grupni treninzi za žene · Zadar
             </div>
 
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
-              <span className="gradient-text">Podignite</span> svoj fitness
-              <br />na višu razinu
+              <span className="gradient-text">Jača svaki dan.</span>
+              <br />Zajedno u Ellevateu.
             </h1>
 
             <p className="text-lg sm:text-xl md:text-2xl text-slate-400 mb-10 max-w-2xl">
-              Ekskluzivni grupni treninzi dizajnirani za žene koje žele više.
-              Snaga, energija, zajednica.
+              Treninzi snage i oblikovanja tijela u grupama do 8 žena.
+              Pronađi svoj ritam i treniraj uz podršku zajednice.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-              <Link href="/pridruzi-se" target="_blank" rel="noopener noreferrer"
+              <Link href="/pridruzi-se"
                   className="btn-primary text-lg px-8 py-4 group"
               >
-                Prijava novih članova
+                Želim se pridružiti
                 <span className="ml-2 group-hover:translate-x-1 transition-transform inline-block">→</span>
               </Link>
-              <a href="#blog" className="btn-secondary text-lg px-8 py-4">
-                Saznaj više
+              <a href="#kako-funkcionira" className="btn-secondary text-lg px-8 py-4">
+                Kako početi?
               </a>
             </div>
+            <p className="mt-6 text-sm text-slate-300 leading-relaxed">
+              Ponedjeljak, srijeda i petak<br />
+              09:00 · 18:15 · 19:20 · 20:30
+            </p>
           </div>
         </div>
 
       </section>
 
       {/* How It Works */}
-      <section className="py-24 px-4">
+      <section id="kako-funkcionira" className="py-16 sm:py-24 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <span className="text-pink-300 font-semibold text-sm uppercase tracking-wider">Jednostavno</span>
@@ -162,10 +166,10 @@ export default function HomePage() {
               Pridružite se našoj zajednici i započnite svoje fitness putovanje već danas.
               Vaše najbolje ja vas čeka.
             </p>
-            <Link href="/pridruzi-se" target="_blank" rel="noopener noreferrer"
+            <Link href="/pridruzi-se"
               className="btn-primary text-lg px-8 py-4"
             >
-              Prijava novih članova
+              Želim se pridružiti
             </Link>
           </div>
         </div>
@@ -197,7 +201,7 @@ export default function HomePage() {
           </div>
           <div className="border-t border-white/10 pt-6 flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="text-slate-500 text-sm">© 2026 Ellevate. Sva prava pridržana.</div>
-            <Link href="/pridruzi-se" target="_blank" rel="noopener noreferrer" className="text-slate-300 hover:text-pink-300">Upit za članstvo i cijene</Link>
+            <Link href="/pridruzi-se" className="text-slate-300 hover:text-pink-300">Upit za članstvo i cijene</Link>
           </div>
         </div>
       </footer>
