@@ -1,10 +1,12 @@
 'use client';
 
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import AdminNav from '@/components/AdminNav';
 import { StatCardSkeleton } from '@/components/Skeleton';
-import { ApiResponse, TrainingSlotWithCount } from '@/types';
+import { ApiResponse, TrainingSlotWithCount, UserWithoutPassword } from '@/types';
+import { membershipSummary } from '@/lib/membership';
 import { format } from 'date-fns';
 import { hr } from 'date-fns/locale';
 
@@ -12,6 +14,7 @@ export default function AdminDashboard() {
     const router = useRouter();
     const [slots, setSlots] = useState<TrainingSlotWithCount[]>([]);
     const [userCount, setUserCount] = useState(0);
+    const [membershipAttention, setMembershipAttention] = useState(0);
     const [reservationCount, setReservationCount] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
 
@@ -30,12 +33,19 @@ export default function AdminDashboard() {
 
             const [slotsData, usersData, resData] = await Promise.all([
                 slotsRes.json() as Promise<ApiResponse<TrainingSlotWithCount[]>>,
-                usersRes.json(),
+                usersRes.json() as Promise<ApiResponse<UserWithoutPassword[]>>,
                 resRes.json()
             ]);
 
             if (slotsData.success) setSlots(slotsData.data);
-            if (usersData.success) setUserCount(usersData.data.length);
+            if (usersData.success) {
+                setUserCount(usersData.data.length);
+                setMembershipAttention(usersData.data.filter((member) => {
+                    if (member.role === 'admin') return false;
+                    const status = membershipSummary(member.membershipPaidOn).status;
+                    return status === 'overdue' || status === 'due_soon';
+                }).length);
+            }
             if (resData.success) setReservationCount(resData.data.length);
 
         } catch (err) {
@@ -60,9 +70,10 @@ export default function AdminDashboard() {
                 </header>
 
                 {/* Stats Grid - 🚀 OPTIMIZACIJA: Skeleton loading */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 mb-12">
                     {isLoading ? (
                         <>
+                            <StatCardSkeleton />
                             <StatCardSkeleton />
                             <StatCardSkeleton />
                             <StatCardSkeleton />
@@ -90,6 +101,13 @@ export default function AdminDashboard() {
                                     <span>Planirani treninzi za danas</span>
                                 </div>
                             </div>
+                            <Link href="/admin/users" className="glass-card animate-fade-in delay-300 block hover:border-amber-300/40">
+                                <p className="text-slate-400 text-sm mb-1">Članarine za obnovu</p>
+                                <p className="text-4xl font-bold">{membershipAttention}</p>
+                                <div className="mt-4 text-amber-300 text-xs flex items-center gap-1">
+                                    <span>Istekle ili ističu u idućih 7 dana</span>
+                                </div>
+                            </Link>
                         </>
                     )}
                 </div>

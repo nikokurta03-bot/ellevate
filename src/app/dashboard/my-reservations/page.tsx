@@ -8,6 +8,7 @@ import { canCancelReservation } from '@/lib/booking-time';
 import { formatInTimeZone } from 'date-fns-tz';
 import { hr } from 'date-fns/locale';
 import { useToast } from '@/components/Toasts';
+import { MembershipCard } from '@/components/Membership';
 
 export default function MyReservationsPage() {
     const { user } = useAuth();
@@ -58,6 +59,7 @@ export default function MyReservationsPage() {
             <UserNav />
 
             <main id="main-content" tabIndex={-1} className="p-6 max-w-4xl mx-auto animate-fade-in">
+                {user && <MembershipCard paidOn={user.membershipPaidOn} />}
                 <header className="mb-8">
                     <h1 className="text-3xl font-bold mb-2">Moje rezervacije</h1>
                     <p className="text-slate-400">Pregled svih vaših prijava na treninge</p>

@@ -24,6 +24,8 @@ export type CreateUserInput = {
     weightKg?: number;
     characteristics?: string;
     role?: 'admin' | 'user';
+    /** YYYY-MM-DD. Empty string or null clears the date. */
+    membershipPaidOn?: string | null;
 };
 
 export type UpdateUserInput = Partial<CreateUserInput>;

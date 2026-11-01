@@ -8,6 +8,7 @@ import { format, startOfWeek, addDays, addWeeks } from 'date-fns';
 import { BOOKING_RULES, canMakeReservation, canCancelReservation, trainingStart, bookingDeadlineLabel, slotDateKey, studioDateKey } from '@/lib/booking-time';
 import { hr } from 'date-fns/locale';
 import { useToast } from '@/components/Toasts';
+import { MembershipCard } from '@/components/Membership';
 
 export default function Dashboard() {
     const { user } = useAuth();
@@ -118,6 +119,7 @@ export default function Dashboard() {
             <UserNav />
 
             <main id="main-content" tabIndex={-1} className="p-4 sm:p-6 max-w-7xl mx-auto animate-fade-in">
+                {user && <MembershipCard paidOn={user.membershipPaidOn} />}
                 <header className="mb-6 sm:mb-12">
                     <div className="flex flex-col gap-4 sm:gap-6">
                         <div>
