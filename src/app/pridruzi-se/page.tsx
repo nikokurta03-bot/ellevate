@@ -2,6 +2,7 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import BrandLogo from '@/components/BrandLogo';
 import EnquiryForm from '@/components/EnquiryForm';
+import LegalLinks from '@/components/LegalLinks';
 
 export const metadata: Metadata = {
     title: 'Upit za članstvo',
@@ -21,6 +22,7 @@ export default function JoinPage() {
                 <h1 className="text-3xl sm:text-4xl font-bold mb-4">Pridružite se <span className="gradient-text">Ellevate studiju</span></h1>
                 <p className="text-slate-300 mb-8">Ispunite kratki obrazac i javit ćemo vam se s informacijama o članstvu i treninzima. Polja označena zvjezdicom su obavezna.</p>
                 <EnquiryForm />
+                <LegalLinks className="mt-8 justify-center" />
             </main>
         </div>
     );

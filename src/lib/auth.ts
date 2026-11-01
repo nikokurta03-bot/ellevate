@@ -1,6 +1,7 @@
 import { SignJWT, jwtVerify } from 'jose';
 import { NextRequest } from 'next/server';
 import { errorResponse } from './helpers';
+import { prisma } from './prisma';
 
 function getJwtSecret(): Uint8Array {
     const secret = process.env.JWT_SECRET;
@@ -9,6 +10,17 @@ function getJwtSecret(): Uint8Array {
 }
 
 const COOKIE_NAME = 'ellevate_token';
+export const SESSION_MAX_AGE = 60 * 60 * 24 * 7;
+
+export function sessionCookieOptions(maxAge = SESSION_MAX_AGE) {
+    return {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax' as const,
+        path: '/',
+        maxAge,
+    };
+}
 
 type SessionPayload = {
     userId: number;
@@ -50,14 +62,26 @@ export async function requireAuth(request: NextRequest) {
     return { error: null, session };
 }
 
-// Require admin role - returns session or 401/403 error response
+// Require admin role - returns session or 401/403 error response.
+// The database role wins over the JWT so a demoted or deleted admin loses access immediately.
 export async function requireAdmin(request: NextRequest) {
     const { error, session } = await requireAuth(request);
-    if (error) return { error, session: null };
-    if (session!.role !== 'admin') {
+    if (error || !session) return { error, session: null };
+    const userId = Number(session.userId);
+    if (!Number.isSafeInteger(userId)) {
+        return { error: errorResponse('Niste prijavljeni', 401), session: null };
+    }
+    let administrator: { role: string } | null;
+    try {
+        administrator = await prisma.user.findUnique({ where: { id: userId }, select: { role: true } });
+    } catch (cause) {
+        console.error('Admin role check failed', cause);
+        return { error: errorResponse('Greška pri provjeri ovlasti', 500), session: null };
+    }
+    if (administrator?.role !== 'admin') {
         return { error: errorResponse('Nemate administratorska prava', 403), session: null };
     }
-    return { error: null, session };
+    return { error: null, session: { userId, role: administrator.role } };
 }
 
 export { COOKIE_NAME };

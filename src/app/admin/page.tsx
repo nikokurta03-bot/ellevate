@@ -7,7 +7,8 @@ import AdminNav from '@/components/AdminNav';
 import { StatCardSkeleton } from '@/components/Skeleton';
 import { ApiResponse, TrainingSlotWithCount, UserWithoutPassword } from '@/types';
 import { membershipSummary } from '@/lib/membership';
-import { format } from 'date-fns';
+import { studioDateKey, STUDIO_TIME_ZONE } from '@/lib/booking-time';
+import { formatInTimeZone } from 'date-fns-tz';
 import { hr } from 'date-fns/locale';
 
 export default function AdminDashboard() {
@@ -19,8 +20,11 @@ export default function AdminDashboard() {
     const [isLoading, setIsLoading] = useState(true);
 
     // Memoize today's date string to avoid recalculating
-    const today = useMemo(() => format(new Date(), 'yyyy-MM-dd'), []);
-    const formattedDate = useMemo(() => format(new Date(), 'EEEE, d. MMMM yyyy.', { locale: hr }), []);
+    const today = useMemo(() => studioDateKey(), []);
+    const formattedDate = useMemo(
+        () => formatInTimeZone(new Date(), STUDIO_TIME_ZONE, 'EEEE, d. MMMM yyyy.', { locale: hr }),
+        [],
+    );
 
     const fetchData = useCallback(async () => {
         try {

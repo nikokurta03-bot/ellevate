@@ -1,4 +1,5 @@
 import BrandLogo from '@/components/BrandLogo';
+import LegalLinks from '@/components/LegalLinks';
 import Link from 'next/link';
 import Image from 'next/image';
 import { blogArticles } from '@/data/blog-articles';
@@ -91,6 +92,7 @@ export default function BlogPage() {
                 <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
                     <BrandLogo />
                     <div className="text-slate-500 text-sm">© 2026 Ellevate. Sva prava pridržana.</div>
+                    <LegalLinks />
                 </div>
             </footer>
         </div>

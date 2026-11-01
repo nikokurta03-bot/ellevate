@@ -24,7 +24,7 @@ export default async function AdminNutritionPage({ searchParams }: { searchParam
 
     // Check the current database role as well as the signed token, so a revoked admin loses access immediately.
     const administrator = await prisma.user.findUnique({ where: { id: session.userId }, select: { role: true } });
-    if (administrator?.role !== 'admin') redirect('/dashboard');
+    if (administrator?.role !== 'admin') redirect('/');
 
     const users = await prisma.user.findMany({
         select: { id: true, firstName: true, lastName: true, email: true, role: true },

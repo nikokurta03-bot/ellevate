@@ -1,7 +1,7 @@
 import { Prisma } from '@prisma/client';
 import { NextRequest } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { excludePassword, errorResponse, successResponse, hashPassword, validateOIB } from '@/lib/helpers';
+import { excludePassword, errorResponse, successResponse, hashPassword, validateOIB, normalizeEmail, parseOptionalIsoDate, optionalPositiveNumber } from '@/lib/helpers';
 import { requireAdmin } from '@/lib/auth';
 import { validateOrigin } from '@/lib/csrf';
 import { studioDateKey } from '@/lib/booking-time';
@@ -76,13 +76,21 @@ export async function PUT(
             return errorResponse('Korisnik nije pronađen', 404);
         }
 
-        // Validate email if changed
-        if (body.email && body.email !== existingUser.email) {
-            const emailExists = await prisma.user.findUnique({
-                where: { email: body.email },
-            });
-            if (emailExists) {
-                return errorResponse('Email adresa je već u upotrebi');
+        // Prepare update data
+        const updateData: Prisma.UserUpdateInput = {};
+
+        // Login compares the normalized address, so mixed case must be stored lowercase.
+        if (body.email !== undefined) {
+            const email = normalizeEmail(body.email);
+            if (!email) return errorResponse('Email adresa nije ispravna');
+            if (email !== existingUser.email) {
+                const emailExists = await prisma.user.findFirst({
+                    where: { id: { not: userId }, email: { equals: email, mode: 'insensitive' } },
+                });
+                if (emailExists) {
+                    return errorResponse('Email adresa je već u upotrebi');
+                }
+                updateData.email = email;
             }
         }
 
@@ -92,29 +100,35 @@ export async function PUT(
                 return errorResponse('OIB nije ispravan');
             }
             const oibExists = await prisma.user.findFirst({
-                where: { oib: body.oib },
+                where: { oib: body.oib, NOT: { id: userId } },
             });
             if (oibExists) {
                 return errorResponse('OIB je već u upotrebi');
             }
         }
 
-        // Prepare update data
-        const updateData: Prisma.UserUpdateInput = {};
-        if (body.email) updateData.email = body.email;
         if (body.firstName) updateData.firstName = body.firstName;
         if (body.lastName) updateData.lastName = body.lastName;
         if (body.oib) updateData.oib = body.oib;
         if (body.address !== undefined) updateData.address = body.address || null;
         if (body.dateOfBirth !== undefined) {
-            updateData.dateOfBirth = body.dateOfBirth ? new Date(body.dateOfBirth) : null;
+            const parsedBirth = parseOptionalIsoDate(body.dateOfBirth);
+            if ('error' in parsedBirth) return errorResponse('Datum rođenja nije ispravan.');
+            updateData.dateOfBirth = parsedBirth.date;
         }
-        if (body.heightCm !== undefined) updateData.heightCm = body.heightCm || null;
-        if (body.weightKg !== undefined) updateData.weightKg = body.weightKg || null;
+        if (body.heightCm !== undefined) updateData.heightCm = optionalPositiveNumber(body.heightCm, true);
+        if (body.weightKg !== undefined) updateData.weightKg = optionalPositiveNumber(body.weightKg, false);
         if (body.characteristics !== undefined) {
             updateData.characteristics = body.characteristics || null;
         }
-        if (body.role) updateData.role = body.role;
+        if (body.role) {
+            if (body.role !== 'admin' && body.role !== 'user') return errorResponse('Uloga nije ispravna');
+            if (body.role !== 'admin' && existingUser.role === 'admin') {
+                const otherAdmins = await prisma.user.count({ where: { role: 'admin', NOT: { id: userId } } });
+                if (otherAdmins === 0) return errorResponse('Ne možete ukloniti jedinog administratora');
+            }
+            updateData.role = body.role;
+        }
         if ('membershipPaidOn' in body) {
             const parsed = parseMembershipPaidOn(body.membershipPaidOn, studioDateKey());
             if ('error' in parsed) return errorResponse(parsed.error);
@@ -160,6 +174,11 @@ export async function DELETE(
         });
         if (!existingUser) {
             return errorResponse('Korisnik nije pronađen', 404);
+        }
+
+        if (existingUser.role === 'admin') {
+            const otherAdmins = await prisma.user.count({ where: { role: 'admin', NOT: { id: userId } } });
+            if (otherAdmins === 0) return errorResponse('Ne možete obrisati jedinog administratora');
         }
 
         // Delete user (cascade will delete reservations)

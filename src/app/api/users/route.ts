@@ -1,7 +1,7 @@
 import { Prisma } from '@prisma/client';
 import { NextRequest } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { excludePassword, errorResponse, successResponse, hashPassword, validateOIB } from '@/lib/helpers';
+import { excludePassword, errorResponse, successResponse, hashPassword, validateOIB, normalizeEmail, parseOptionalIsoDate, optionalPositiveNumber } from '@/lib/helpers';
 import { requireAdmin } from '@/lib/auth';
 import { validateOrigin } from '@/lib/csrf';
 import { studioDateKey } from '@/lib/booking-time';
@@ -56,18 +56,15 @@ export async function POST(request: NextRequest) {
     try {
         const body: CreateUserInput = await request.json();
 
-        // Normalize email to lowercase
-        const email = body.email?.trim().toLowerCase();
+        const email = normalizeEmail(body.email);
+        const role = body.role || 'user';
 
         // Validate required fields (OIB is now optional)
         if (!email || !body.password || !body.firstName || !body.lastName) {
             return errorResponse('Sva obavezna polja moraju biti popunjena');
         }
-
-        // Validate email format
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-            return errorResponse('Email adresa nije ispravna');
+        if (role !== 'admin' && role !== 'user') {
+            return errorResponse('Uloga nije ispravna');
         }
 
         // Validate OIB only if provided
@@ -86,8 +83,8 @@ export async function POST(request: NextRequest) {
         }
 
         // Check if email already exists
-        const existingEmail = await prisma.user.findUnique({
-            where: { email },
+        const existingEmail = await prisma.user.findFirst({
+            where: { email: { equals: email, mode: 'insensitive' } },
         });
         if (existingEmail) {
             return errorResponse('Korisnik s ovom email adresom već postoji');
@@ -98,6 +95,13 @@ export async function POST(request: NextRequest) {
             const parsed = parseMembershipPaidOn(body.membershipPaidOn, studioDateKey());
             if ('error' in parsed) return errorResponse(parsed.error);
             membershipPaidOn = parsed.date;
+        }
+
+        let dateOfBirth: Date | null = null;
+        if (body.dateOfBirth) {
+            const parsedBirth = parseOptionalIsoDate(body.dateOfBirth);
+            if ('error' in parsedBirth) return errorResponse('Datum rođenja nije ispravan.');
+            dateOfBirth = parsedBirth.date;
         }
 
         // Hash password
@@ -112,11 +116,11 @@ export async function POST(request: NextRequest) {
                 lastName: body.lastName,
                 oib: body.oib || '',
                 address: body.address || null,
-                dateOfBirth: body.dateOfBirth ? new Date(body.dateOfBirth) : null,
-                heightCm: body.heightCm || null,
-                weightKg: body.weightKg || null,
+                dateOfBirth,
+                heightCm: optionalPositiveNumber(body.heightCm, true),
+                weightKg: optionalPositiveNumber(body.weightKg, false),
                 characteristics: body.characteristics || null,
-                role: body.role || 'user',
+                role,
                 membershipPaidOn,
             },
         });

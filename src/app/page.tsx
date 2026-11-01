@@ -1,4 +1,5 @@
 import BrandLogo from '@/components/BrandLogo';
+import LegalLinks from '@/components/LegalLinks';
 import Image from 'next/image';
 import Link from 'next/link';
 import { LoginProvider, LoginButton } from '@/components/HomeLogin';
@@ -160,7 +161,7 @@ export default function HomePage() {
           <div className="absolute inset-0 bg-gradient-to-r from-pink-300/10 via-purple-500/10 to-pink-300/10" />
           <div className="relative z-10">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Spremni za transformaciju?
+              Spremne za transformaciju?
             </h2>
             <p className="text-slate-400 mb-8 max-w-xl mx-auto">
               Pridružite se našoj zajednici i započnite svoje fitness putovanje već danas.
@@ -201,6 +202,7 @@ export default function HomePage() {
           </div>
           <div className="border-t border-white/10 pt-6 flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="text-slate-500 text-sm">© 2026 Ellevate. Sva prava pridržana.</div>
+            <LegalLinks />
             <Link href="/pridruzi-se" className="text-slate-300 hover:text-pink-300">Upit za članstvo i cijene</Link>
           </div>
         </div>

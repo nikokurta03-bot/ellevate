@@ -1,4 +1,5 @@
 import BrandLogo from '@/components/BrandLogo';
+import LegalLinks from '@/components/LegalLinks';
 import Link from 'next/link';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
@@ -20,7 +21,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
         openGraph: {
             title: article.title,
             description: article.excerpt,
-            images: [{ url: `https://ellevate.hr${article.image}` }],
+            images: [{ url: article.image }],
         },
     };
 }
@@ -106,11 +107,11 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
             {/* CTA Section */}
             <section className="pb-16 px-4">
                 <div className="max-w-4xl mx-auto glass-card text-center">
-                    <h2 className="text-2xl font-bold mb-4">Spremni za akciju?</h2>
+                    <h2 className="text-2xl font-bold mb-4">Spremne za akciju?</h2>
                     <p className="text-slate-400 mb-6">
                         Pridružite se Ellevate zajednici i započnite svoje fitness putovanje već danas.
                     </p>
-                    <Link href="/pridruzi-se" target="_blank" rel="noopener noreferrer" className="btn-primary inline-block">
+                    <Link href="/pridruzi-se" className="btn-primary inline-block">
                         Pošalji upit za članstvo
                     </Link>
                 </div>
@@ -122,6 +123,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
                 <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
                     <BrandLogo />
                     <div className="text-slate-500 text-sm">© 2026 Ellevate. Sva prava pridržana.</div>
+                    <LegalLinks />
                 </div>
             </footer>
         </div>
