@@ -30,6 +30,7 @@ model User {
 
   reservations Reservation[]
   nutritionMenus NutritionMenu[]
+  membership Membership?
 
   @@index([role])
 }
@@ -76,4 +77,16 @@ model Reservation {
 
   @@unique([userId, slotId]) // korisnik može imati samo jednu rezervaciju po terminu
   @@index([status])
+}
+
+model Membership {
+  userId Int @id
+  joinedOn String
+  firstPaidOn String
+  lastPaidOn String
+  dueOn String
+  remindedFor String?
+  claimedAt DateTime?
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@index([dueOn])
 }

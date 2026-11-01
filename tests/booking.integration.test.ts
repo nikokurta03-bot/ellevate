@@ -88,3 +88,18 @@ test('cancellation enforces ownership and simultaneous cancellations have one wi
     const next = await bookTraining(db, users[1].id, training.id, now);
     assert.equal(next.status, 'active');
 });
+
+test('membership reminder claims allow only one sender and preserve sent deadlines', async () => {
+    const userId = users[0].id;
+    const dueOn = '2026-11-02';
+    await db.membership.create({ data: { userId, joinedOn: '2026-10-02', firstPaidOn: '2026-10-02', lastPaidOn: '2026-10-02', dueOn } });
+    const claims = await Promise.all(Array.from({ length: 5 }, () => db.membership.updateMany({
+        where: { userId, dueOn, claimedAt: null, remindedFor: null }, data: { claimedAt: new Date() },
+    })));
+    assert.equal(claims.reduce((count, result) => count + result.count, 0), 1);
+    await db.membership.update({ where: { userId }, data: { remindedFor: dueOn, claimedAt: null } });
+    const eligible = await db.membership.count({ where: { userId, dueOn, OR: [{ remindedFor: null }, { remindedFor: { not: dueOn } }] } });
+    assert.equal(eligible, 0);
+    await db.membership.update({ where: { userId }, data: { lastPaidOn: dueOn, dueOn: '2026-12-02' } });
+    assert.equal((await db.membership.findUniqueOrThrow({ where: { userId } })).firstPaidOn, '2026-10-02');
+});

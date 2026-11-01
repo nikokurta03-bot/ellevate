@@ -1,5 +1,6 @@
 'use client';
 
+import MembershipCard from '@/components/MembershipCard';
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import UserNav from '@/components/UserNav';
 import { useAuth } from '@/context/AuthContext';
@@ -118,6 +119,7 @@ export default function Dashboard() {
             <UserNav />
 
             <main id="main-content" tabIndex={-1} className="p-4 sm:p-6 max-w-7xl mx-auto animate-fade-in">
+                <MembershipCard />
                 <header className="mb-6 sm:mb-12">
                     <div className="flex flex-col gap-4 sm:gap-6">
                         <div>
