@@ -1,23 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { errorResponse, verifyPassword, excludePassword } from '@/lib/helpers';
-import { signToken, COOKIE_NAME } from '@/lib/auth';
+import { errorResponse, verifyPassword, excludePassword, normalizeEmail } from '@/lib/helpers';
+import { signToken, COOKIE_NAME, sessionCookieOptions } from '@/lib/auth';
 import { validateOrigin } from '@/lib/csrf';
 
 // In-memory rate limiting
 const loginAttempts = new Map<string, { count: number; firstAttempt: number }>();
 const MAX_ATTEMPTS = 20;
+const MAX_IP_ATTEMPTS = 60;
 const WINDOW_MS = 15 * 60 * 1000; // 15 minutes
 
-function isRateLimited(email: string): boolean {
+function isRateLimited(key: string): boolean {
     const now = Date.now();
-    const record = loginAttempts.get(email);
+    const record = loginAttempts.get(key);
+    const limit = key.startsWith('ip:') ? MAX_IP_ATTEMPTS : MAX_ATTEMPTS;
     if (!record) return false;
     if (now - record.firstAttempt > WINDOW_MS) {
-        loginAttempts.delete(email);
+        loginAttempts.delete(key);
         return false;
     }
-    return record.count >= MAX_ATTEMPTS;
+    return record.count >= limit;
 }
 
 function recordFailedAttempt(email: string) {
@@ -41,14 +43,15 @@ export async function POST(request: NextRequest) {
         if (originError) return originError;
 
         const body = await request.json();
-        const email = body.email?.trim().toLowerCase();
-        const password = body.password;
+        const email = normalizeEmail(body.email);
+        const password = typeof body.password === 'string' ? body.password : '';
+        const ipKey = `ip:${request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'}`;
 
         if (!email || !password) {
             return errorResponse('Email i lozinka su obavezni');
         }
 
-        if (isRateLimited(email)) {
+        if (isRateLimited(ipKey) || isRateLimited(email)) {
             return NextResponse.json(
                 { success: false, error: 'Previše pokušaja prijave. Pokušajte ponovno za 15 minuta.' },
                 { status: 429 }
@@ -56,11 +59,12 @@ export async function POST(request: NextRequest) {
         }
 
         // Find user by email
-        const user = await prisma.user.findUnique({
-            where: { email },
+        const user = await prisma.user.findFirst({
+            where: { email: { equals: email, mode: 'insensitive' } },
         });
 
         if (!user) {
+            recordFailedAttempt(ipKey);
             recordFailedAttempt(email);
             return errorResponse('Pogrešan email ili lozinka', 401);
         }
@@ -69,11 +73,13 @@ export async function POST(request: NextRequest) {
         const isValid = await verifyPassword(password, user.password);
 
         if (!isValid) {
+            recordFailedAttempt(ipKey);
             recordFailedAttempt(email);
             return errorResponse('Pogrešan email ili lozinka', 401);
         }
 
         // Reset rate limit on successful login
+        clearRateLimit(ipKey);
         clearRateLimit(email);
 
         // Sign JWT token
@@ -92,13 +98,7 @@ export async function POST(request: NextRequest) {
         );
 
         // Set HTTP-only cookie
-        response.cookies.set(COOKIE_NAME, token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax',
-            path: '/',
-            maxAge: 60 * 60 * 24 * 7, // 7 days
-        });
+        response.cookies.set(COOKIE_NAME, token, sessionCookieOptions());
 
         return response;
     } catch (error) {

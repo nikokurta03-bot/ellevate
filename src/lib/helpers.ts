@@ -1,5 +1,30 @@
 import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
+import { isRealIsoDate } from './membership';
+
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+export function normalizeEmail(value: unknown): string | null {
+    if (typeof value !== 'string') return null;
+    const email = value.trim().toLowerCase();
+    if (!email || email.length > 254 || !EMAIL_PATTERN.test(email)) return null;
+    return email;
+}
+
+/** Calendar date stored at UTC midnight. Empty input clears the value. */
+export function parseOptionalIsoDate(value: unknown): { date: Date | null } | { error: string } {
+    if (value == null || value === '') return { date: null };
+    if (typeof value !== 'string' || !isRealIsoDate(value)) return { error: 'Datum nije ispravan.' };
+    return { date: new Date(`${value}T00:00:00.000Z`) };
+}
+
+export function optionalPositiveNumber(value: unknown, integer: boolean): number | null {
+    const number = typeof value === 'number' ? value : Number(value);
+    if (!Number.isFinite(number) || number <= 0) return null;
+    const normalized = integer ? Math.round(number) : number;
+    if (!Number.isFinite(normalized) || (integer && !Number.isSafeInteger(normalized))) return null;
+    return normalized;
+}
 
 // Exclude password from user object
 export function excludePassword<T extends { password: string }>(

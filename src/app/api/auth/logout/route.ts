@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { COOKIE_NAME } from '@/lib/auth';
+import { COOKIE_NAME, sessionCookieOptions } from '@/lib/auth';
 import { validateOrigin } from '@/lib/csrf';
 
 // POST /api/auth/logout - Odjava korisnika
@@ -12,13 +12,7 @@ export async function POST(request: NextRequest) {
     );
 
     // Clear the auth cookie
-    response.cookies.set(COOKIE_NAME, '', {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        path: '/',
-        maxAge: 0,
-    });
+    response.cookies.set(COOKIE_NAME, '', sessionCookieOptions(0));
 
     return response;
 }

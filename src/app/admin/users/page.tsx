@@ -30,7 +30,7 @@ export default function UsersPage() {
     const fetchUsers = useCallback(async () => {
         setIsLoading(true);
         try {
-            const response = await fetch(`/api/users${debouncedSearch ? `?search=${debouncedSearch}` : ''}`);
+            const response = await fetch(`/api/users${debouncedSearch ? `?search=${encodeURIComponent(debouncedSearch)}` : ''}`);
             const result: ApiResponse<UserWithoutPassword[]> = await response.json();
             if (result.success) {
                 setUsers(result.data);

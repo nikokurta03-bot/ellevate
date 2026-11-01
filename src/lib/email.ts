@@ -31,6 +31,15 @@ const baseStyle = `
   color: #e2e8f0;
 `;
 
+function escapeHtml(value: string): string {
+    return value
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
 function emailTemplate(title: string, emoji: string, accentColor: string, userName: string, slotDate: Date, slotTime: string) {
     const dayName = getDayName(slotDate);
     const dateStr = formatDate(slotDate);
@@ -45,7 +54,7 @@ function emailTemplate(title: string, emoji: string, accentColor: string, userNa
         <table style="width: 100%; border-collapse: collapse;">
           <tr>
             <td style="padding: 10px 0; color: #94a3b8; font-size: 13px;">Korisnik</td>
-            <td style="padding: 10px 0; text-align: right; font-weight: 600; font-size: 15px; color: #f1f5f9;">${userName}</td>
+            <td style="padding: 10px 0; text-align: right; font-weight: 600; font-size: 15px; color: #f1f5f9;">${escapeHtml(userName)}</td>
           </tr>
           <tr style="border-top: 1px solid #1e293b;">
             <td style="padding: 10px 0; color: #94a3b8; font-size: 13px;">Dan</td>
@@ -57,7 +66,7 @@ function emailTemplate(title: string, emoji: string, accentColor: string, userNa
           </tr>
           <tr style="border-top: 1px solid #1e293b;">
             <td style="padding: 10px 0; color: #94a3b8; font-size: 13px;">Vrijeme</td>
-            <td style="padding: 10px 0; text-align: right; font-weight: 600; font-size: 15px; color: #f1f5f9;">${slotTime}</td>
+            <td style="padding: 10px 0; text-align: right; font-weight: 600; font-size: 15px; color: #f1f5f9;">${escapeHtml(slotTime)}</td>
           </tr>
         </table>
       </div>
@@ -76,10 +85,12 @@ export async function sendBookingNotification(
     try {
         const resend = getResend();
         if (!resend) return;
+        const safeName = userName.replace(/[\r\n]+/g, ' ').slice(0, 200);
+        const safeTime = slotTime.replace(/[\r\n]+/g, ' ').slice(0, 40);
         await sendWithRetry(resend, {
             from: FROM_EMAIL,
             to: ADMIN_EMAIL,
-            subject: `✅ Nova prijava: ${userName} — ${slotTime}`,
+            subject: `✅ Nova prijava: ${safeName} — ${safeTime}`,
             html: emailTemplate(
                 'Nova Prijava na Trening',
                 '🏋️',
@@ -102,10 +113,12 @@ export async function sendCancellationNotification(
     try {
         const resend = getResend();
         if (!resend) return;
+        const safeName = userName.replace(/[\r\n]+/g, ' ').slice(0, 200);
+        const safeTime = slotTime.replace(/[\r\n]+/g, ' ').slice(0, 40);
         await sendWithRetry(resend, {
             from: FROM_EMAIL,
             to: ADMIN_EMAIL,
-            subject: `❌ Otkaz: ${userName} — ${slotTime}`,
+            subject: `❌ Otkaz: ${safeName} — ${safeTime}`,
             html: emailTemplate(
                 'Otkazana Rezervacija',
                 '🚫',
