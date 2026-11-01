@@ -4,8 +4,6 @@ import { prisma } from '@/lib/prisma';
 import { excludePassword, errorResponse, successResponse, hashPassword, validateOIB } from '@/lib/helpers';
 import { requireAdmin } from '@/lib/auth';
 import { validateOrigin } from '@/lib/csrf';
-import { studioDateKey } from '@/lib/booking-time';
-import { parseMembershipPaidOn } from '@/lib/membership';
 import { UpdateUserInput } from '@/types';
 
 // GET /api/users/[id] - Dohvati jednog korisnika (admin only)
@@ -115,11 +113,6 @@ export async function PUT(
             updateData.characteristics = body.characteristics || null;
         }
         if (body.role) updateData.role = body.role;
-        if ('membershipPaidOn' in body) {
-            const parsed = parseMembershipPaidOn(body.membershipPaidOn, studioDateKey());
-            if ('error' in parsed) return errorResponse(parsed.error);
-            updateData.membershipPaidOn = parsed.date;
-        }
         if (body.password) {
             updateData.password = await hashPassword(body.password);
         }

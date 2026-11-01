@@ -2,8 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { UserWithoutPassword, CreateUserInput } from '@/types';
-import { toDateOnly } from '@/lib/membership';
-import { MembershipDateInput } from '@/components/Membership';
 
 type UserModalProps = {
     isOpen: boolean;
@@ -25,7 +23,6 @@ export default function UserModal({ isOpen, onClose, onSave, user }: UserModalPr
         heightCm: 0,
         weightKg: 0,
         characteristics: '',
-        membershipPaidOn: '',
     });
 
     const [error, setError] = useState('');
@@ -44,7 +41,6 @@ export default function UserModal({ isOpen, onClose, onSave, user }: UserModalPr
                 heightCm: user.heightCm || 0,
                 weightKg: user.weightKg || 0,
                 characteristics: user.characteristics || '',
-                membershipPaidOn: toDateOnly(user.membershipPaidOn) ?? '',
             });
         } else {
             setFormData({
@@ -59,7 +55,6 @@ export default function UserModal({ isOpen, onClose, onSave, user }: UserModalPr
                 heightCm: 0,
                 weightKg: 0,
                 characteristics: '',
-                membershipPaidOn: '',
             });
         }
     }, [user, isOpen]);
@@ -179,18 +174,6 @@ export default function UserModal({ isOpen, onClose, onSave, user }: UserModalPr
                     <div className="md:col-span-2">
                         <label className="block text-xs font-medium text-slate-400 mb-1">Karakteristike / Napomene</label>
                         <textarea name="characteristics" value={formData.characteristics} onChange={handleChange} rows={3} className="w-full bg-white/5 border border-white/10 p-2 rounded-lg resize-none" />
-                    </div>
-
-                    <div className="md:col-span-2 space-y-4 mt-4">
-                        <h3 className="text-sm font-bold text-pink-300 uppercase tracking-wider">Članarina</h3>
-                    </div>
-
-                    <div className="md:col-span-2">
-                        <MembershipDateInput
-                            id="membershipPaidOn"
-                            value={formData.membershipPaidOn || ''}
-                            onChange={(value) => setFormData((prev) => ({ ...prev, membershipPaidOn: value }))}
-                        />
                     </div>
 
                     {error && <div className="md:col-span-2 text-red-500 text-sm">{error}</div>}

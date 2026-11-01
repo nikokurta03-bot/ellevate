@@ -4,8 +4,6 @@ import { prisma } from '@/lib/prisma';
 import { excludePassword, errorResponse, successResponse, hashPassword, validateOIB } from '@/lib/helpers';
 import { requireAdmin } from '@/lib/auth';
 import { validateOrigin } from '@/lib/csrf';
-import { studioDateKey } from '@/lib/booking-time';
-import { parseMembershipPaidOn } from '@/lib/membership';
 import { CreateUserInput } from '@/types';
 
 // GET /api/users - Dohvati sve korisnike (admin only)
@@ -93,13 +91,6 @@ export async function POST(request: NextRequest) {
             return errorResponse('Korisnik s ovom email adresom već postoji');
         }
 
-        let membershipPaidOn: Date | null = null;
-        if ('membershipPaidOn' in body) {
-            const parsed = parseMembershipPaidOn(body.membershipPaidOn, studioDateKey());
-            if ('error' in parsed) return errorResponse(parsed.error);
-            membershipPaidOn = parsed.date;
-        }
-
         // Hash password
         const hashedPassword = await hashPassword(body.password);
 
@@ -117,7 +108,6 @@ export async function POST(request: NextRequest) {
                 weightKg: body.weightKg || null,
                 characteristics: body.characteristics || null,
                 role: body.role || 'user',
-                membershipPaidOn,
             },
         });
 
