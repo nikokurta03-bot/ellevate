@@ -24,9 +24,10 @@ model User {
   heightCm        Int?
   weightKg        Float?
   characteristics String?   // dodatne karakteristike
-  role            String    @default("user") // "admin" ili "user"
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  role             String    @default("user") // "admin" ili "user"
+  membershipPaidOn DateTime? // datum upisa / zadnjeg plaćanja članarine (UTC ponoć); prazno dok admin ne unese
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
 
   reservations Reservation[]
   nutritionMenus NutritionMenu[]
