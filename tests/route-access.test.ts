@@ -3,7 +3,7 @@ import test from 'node:test';
 import { isProtectedRoute, routeRedirect } from '../src/lib/route-access';
 
 test('public pages remain accessible without a session', () => {
-  for (const path of ['/', '/blog', '/blog/grupni-treninzi', '/missing', '/administrator']) {
+  for (const path of ['/', '/blog', '/blog/grupni-treninzi', '/pridruzi-se', '/privatnost', '/impressum', '/missing', '/administrator']) {
     assert.equal(isProtectedRoute(path), false);
     assert.equal(routeRedirect(path, null), null);
   }

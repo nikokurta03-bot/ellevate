@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: '/',
       disallow: ['/admin', '/dashboard', '/api'],
     },
-    sitemap: 'https://ellevate.hr/sitemap.xml',
+    sitemap: 'https://www.ellevate.hr/sitemap.xml',
   };
 }
