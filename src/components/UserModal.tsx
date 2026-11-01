@@ -1,5 +1,6 @@
 'use client';
 
+import MembershipCard from '@/components/MembershipCard';
 import React, { useState, useEffect } from 'react';
 import { UserWithoutPassword, CreateUserInput } from '@/types';
 
@@ -107,6 +108,8 @@ export default function UserModal({ isOpen, onClose, onSave, user }: UserModalPr
                     <button onClick={onClose} className="text-slate-400 hover:text-white"> zatvori </button>
                 </div>
 
+                {user && <MembershipCard key={user.id} userId={user.id} editable />}
+                {!user && <p className="mb-4 text-sm text-slate-300">Nakon kreiranja korisnice otvorite Uredi za unos datuma upisa i uplata.</p>}
                 <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="md:col-span-2 space-y-4">
                         <h3 className="text-sm font-bold text-pink-300 uppercase tracking-wider">Osnovni podaci</h3>
