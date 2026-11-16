@@ -35,6 +35,7 @@ export type TrainingSlotWithCount = TrainingSlot & {
     _count: {
         reservations: number;
     };
+    isClosed: boolean;
     currentCount: number;
     isFull: boolean;
     availableSpots: number;
@@ -51,7 +52,7 @@ export type TrainingSlotWithCount = TrainingSlot & {
 // Reservation types
 export type ReservationWithDetails = Reservation & {
     user: UserWithoutPassword;
-    slot: TrainingSlot;
+    slot: TrainingSlot & { isClosed?: boolean };
 };
 
 export type CreateReservationInput = {

@@ -50,7 +50,7 @@ export default function HomePage() {
             </h1>
 
             <p className="text-lg sm:text-xl md:text-2xl text-slate-400 mb-10 max-w-2xl">
-              Treninzi snage i oblikovanja tijela u grupama do 8 žena.
+              Treninzi snage i oblikovanja tijela u grupama do 9 žena.
               Pronađi svoj ritam i treniraj uz podršku zajednice.
             </p>
 
@@ -67,7 +67,7 @@ export default function HomePage() {
             </div>
             <p className="mt-6 text-sm text-slate-300 leading-relaxed">
               Ponedjeljak, srijeda i petak<br />
-              09:00 · 18:15 · 19:20 · 20:30
+              09:00 · 17:15 · 18:15 · 19:20 · 20:30
             </p>
           </div>
         </div>
@@ -189,7 +189,7 @@ export default function HomePage() {
               <h4 className="font-bold text-sm mb-3 text-slate-300">Radno vrijeme</h4>
               <div className="text-slate-500 text-sm space-y-1">
                 <p>Pon / Sri / Pet</p>
-                <p>09:00 | 18:15 | 19:20 | 20:30</p>
+                <p>09:00 | 17:15 | 18:15 | 19:20 | 20:30</p>
               </div>
             </div>
             <div>

@@ -1,5 +1,7 @@
 import { Prisma, PrismaClient } from '@prisma/client';
-import { canMakeReservation, canCancelReservation, bookingDeadlineLabel } from './booking-time';
+import { canMakeReservation, canCancelReservation, bookingDeadlineLabel, trainingStart } from './booking-time';
+
+import { lockDay } from './schedule-db';
 
 export class BookingError extends Error {
     constructor(message: string, public status = 400) { super(message); }
@@ -14,12 +16,22 @@ const details = {
 // count/status queries after waiting on the lock see the preceding writer's commit.
 const transactionOptions = { isolationLevel: Prisma.TransactionIsolationLevel.ReadCommitted, maxWait: 10000, timeout: 10000 };
 
-export async function bookTraining(db: PrismaClient, userId: number, slotId: number, now?: Date) {
+export async function bookTraining(db: PrismaClient, userId: number, slotId: number, now?: Date, actor?: { userId: number; role: string }) {
     return db.$transaction(async tx => {
+        const initial = await tx.trainingSlot.findUnique({ where: { id: slotId }, select: { date: true } });
+        if (!initial) throw new BookingError('Termin nije pronađen', 404);
+        await lockDay(tx, initial.date);
+        const day = await tx.scheduleDay.findUnique({ where: { date: initial.date } });
+        if (day?.isClosed) throw new BookingError('Dan je zatvoren za treninge');
         const locked = await tx.$queryRaw<{ id: number }[]>`SELECT "id" FROM "TrainingSlot" WHERE "id" = ${slotId} FOR UPDATE`;
         if (!locked.length) throw new BookingError('Termin nije pronađen', 404);
         const slot = await tx.trainingSlot.findUniqueOrThrow({ where: { id: slotId } });
-        if (!canMakeReservation(slot.date, slot.startTime, now ?? new Date())) {
+        const isAdmin = actor?.role === 'admin' && (await tx.user.findUnique({ where: { id: actor.userId }, select: { role: true } }))?.role === 'admin';
+        if (actor && !isAdmin && actor.userId !== userId) throw new BookingError('Možete kreirati rezervacije samo za sebe', 403);
+        if (isAdmin && trainingStart(slot.date, slot.startTime) <= (now ?? new Date())) {
+            throw new BookingError('Ne možete dodati polaznicu na termin koji je već prošao');
+        }
+        if (!isAdmin && !canMakeReservation(slot.date, slot.startTime, now ?? new Date())) {
             throw new BookingError(`Rok za prijavu je istekao. Prijave su bile moguće do ${bookingDeadlineLabel(slot.date, slot.startTime)} (Zagreb).`);
         }
         const user = await tx.user.findUnique({ where: { id: userId }, select: { id: true } });
@@ -42,9 +54,10 @@ export async function cancelTraining(db: PrismaClient, reservationId: number, ac
         await tx.$queryRaw`SELECT "id" FROM "TrainingSlot" WHERE "id" = ${initial.slotId} FOR UPDATE`;
         const reservation = await tx.reservation.findUnique({ where: { id: reservationId }, include: { slot: true } });
         if (!reservation) throw new BookingError('Rezervacija nije pronađena', 404);
-        if (actor.role !== 'admin' && reservation.userId !== actor.userId) throw new BookingError('Možete otkazati samo svoje rezervacije', 403);
+        const isAdmin = actor.role === 'admin' && (await tx.user.findUnique({ where: { id: actor.userId }, select: { role: true } }))?.role === 'admin';
+        if (!isAdmin && reservation.userId !== actor.userId) throw new BookingError('Možete otkazati samo svoje rezervacije', 403);
         if (reservation.status !== 'active') throw new BookingError('Rezervacija je već otkazana', 409);
-        if (!canCancelReservation(reservation.slot.date, reservation.slot.startTime, now ?? new Date())) {
+        if (!isAdmin && !canCancelReservation(reservation.slot.date, reservation.slot.startTime, now ?? new Date())) {
             throw new BookingError('Nije moguće otkazati rezervaciju manje od 3 sata prije početka termina');
         }
         return tx.reservation.update({ where: { id: reservationId }, data: { status: 'cancelled', cancelledAt: now ?? new Date() }, include: details });

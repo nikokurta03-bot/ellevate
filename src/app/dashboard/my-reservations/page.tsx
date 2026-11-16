@@ -83,10 +83,11 @@ export default function MyReservationsPage() {
                                     <div>
                                         <h3 className="text-xl font-bold">{res.slot.startTime} - {res.slot.endTime}</h3>
                                         <p className="text-slate-400 text-sm">Grupni trening snage</p>
+                                        {res.slot.isClosed && <p className="text-sm text-amber-300 mt-2">Trening se ne održava. Prijava je sačuvana.</p>}
                                         <div className="mt-2 flex items-center gap-2">
                                             <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase ${res.status === 'active' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-500'
                                                 }`}>
-                                                {res.status === 'active' ? 'AKTIVNO' : 'OTKAZANO'}
+                                                {res.status === 'active' ? (res.slot.isClosed ? 'DAN ZATVOREN' : 'AKTIVNO') : 'OTKAZANO'}
                                             </span>
                                         </div>
                                     </div>
