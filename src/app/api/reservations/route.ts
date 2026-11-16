@@ -1,3 +1,4 @@
+import { dateKey } from '@/lib/schedule';
 import { Prisma } from '@prisma/client';
 import { bookTraining, BookingError } from '@/lib/booking-service';
 import { NextRequest, after } from 'next/server';
@@ -46,7 +47,12 @@ export async function GET(request: NextRequest) {
             orderBy: { createdAt: 'desc' },
         });
 
-        return successResponse(reservations);
+        const closedDays = new Set((await prisma.scheduleDay.findMany({
+            where: { date: { in: reservations.map(reservation => reservation.slot.date) }, isClosed: true },
+        })).map(day => dateKey(day.date)));
+        return successResponse(reservations.map(reservation => ({ ...reservation,
+            slot: { ...reservation.slot, isClosed: closedDays.has(dateKey(reservation.slot.date)) },
+        })));
     } catch (error) {
         console.error('Error fetching reservations:', error);
         return errorResponse('Greška pri dohvaćanju rezervacija', 500);
@@ -72,7 +78,7 @@ export async function POST(request: NextRequest) {
         if (!Number.isSafeInteger(userId) || userId <= 0 || !Number.isSafeInteger(slotId) || slotId <= 0) {
             return errorResponse('userId i slotId moraju biti pozitivni cijeli brojevi');
         }
-        const reservation = await bookTraining(prisma, userId, slotId);
+        const reservation = await bookTraining(prisma, userId, slotId, undefined, session!);
 
         // Keep notification work alive after the response on Vercel.
         const userName = `${reservation.user.firstName} ${reservation.user.lastName}`;

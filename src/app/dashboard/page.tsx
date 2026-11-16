@@ -1,5 +1,6 @@
 'use client';
 
+import { TRAINING_TIMES } from '@/lib/schedule';
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import UserNav from '@/components/UserNav';
 import { useAuth } from '@/context/AuthContext';
@@ -27,9 +28,9 @@ export default function Dashboard() {
     // 🚀 OPTIMIZACIJA: Memoizirani izračuni datuma
     const todayInZagreb = studioDateKey(clock);
     const weekStart = useMemo(() => startOfWeek(addWeeks(new Date(`${todayInZagreb}T12:00:00`), weekOffset), { weekStartsOn: 1 }), [weekOffset, todayInZagreb]);
-    // Only Monday (0), Wednesday (2), Friday (4) - skip Tuesday and Thursday
-    const weekDays = useMemo(() => [0, 2, 4].map((dayOffset) => addDays(weekStart, dayOffset)), [weekStart]);
-    const timeRows = useMemo(() => Array.from(new Set(['09:00', '18:15', '19:20', '20:30', ...slots.map(slot => slot.startTime)])).sort(), [slots]);
+    // Include the regular days and any extra dates opened by the administrator.
+    const weekDays = useMemo(() => Array.from({ length: 7 }, (_, i) => addDays(weekStart, i)).filter((day, i) => [0, 2, 4].includes(i) || slots.some(slot => slotDateKey(slot.date) === format(day, 'yyyy-MM-dd'))), [weekStart, slots]);
+    const timeRows = useMemo(() => Array.from(new Set([...TRAINING_TIMES.map(time => time.start), ...slots.map(slot => slot.startTime)])).sort(), [slots]);
 
     // 🚀 OPTIMIZACIJA: useCallback za stabilnu referencu
     const fetchData = useCallback(async () => {
@@ -125,7 +126,7 @@ export default function Dashboard() {
                         <div>
                             <h1 className="text-2xl sm:text-4xl font-bold mb-2">Rezervirajte svoj termin</h1>
                             <p className="text-slate-400 text-sm sm:text-base max-w-lg">
-                                Odaberite željeni termin za trening. Maksimalno 8 osoba po grupi.
+                                Odaberite željeni termin za trening. Maksimalno 9 osoba po grupi.
                                 {BOOKING_RULES}
                             </p>
                         </div>
@@ -146,7 +147,7 @@ export default function Dashboard() {
                                 > → </button>
                             </div>
                             <div className="glass px-4 sm:px-6 py-3 sm:py-2 rounded-xl flex items-center justify-center font-medium bg-pink-300/10 border-pink-300/20 text-sm sm:text-base">
-                                {format(weekStart, 'd.M.')} - {format(addDays(weekStart, 4), 'd.M.yyyy.')}
+                                {format(weekStart, 'd.M.')} - {format(addDays(weekStart, 6), 'd.M.yyyy.')}
                             </div>
                         </div>
                     </div>
@@ -206,11 +207,12 @@ export default function Dashboard() {
                                                 </div>
                                             )}
 
+                                            {slot?.isClosed && <p className="text-sm text-amber-300">Dan je zatvoren — trening se ne održava.</p>}
                                             {slot && <p className="text-xs text-slate-300">Prijava do {bookingDeadlineLabel(slot.date, slot.startTime)} (Zagreb)</p>}
                                             {slot ? (
                                                 <button
                                                     onClick={() => handleBooking(slot.id)}
-                                                    disabled={actionLoading !== null || deadlinePassed || (isFull && !isBooked)}
+                                                    disabled={actionLoading !== null || (slot.isClosed && !isBooked) || deadlinePassed || (isFull && !isBooked)}
                                                     className={`w-full py-3 sm:py-2 rounded-xl text-sm font-bold transition-all min-h-[44px] ${isBooked
                                                         ? 'bg-red-500/10 text-red-500 hover:bg-red-500/20 border border-red-500/20'
                                                         : isFull
@@ -220,6 +222,8 @@ export default function Dashboard() {
                                                 >
                                                     {actionLoading === slot.id
                                                         ? 'Učitavanje...'
+                                                        : slot.isClosed && !isBooked
+                                                            ? 'Dan zatvoren'
                                                         : deadlinePassed
                                                             ? (isBooked ? 'Otkazivanje zatvoreno' : 'Prijave zatvorene')
                                                         : isBooked

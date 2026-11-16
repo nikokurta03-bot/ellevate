@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     default: "Grupni treninzi za žene u Zadru | Ellevate",
     template: "%s | Ellevate"
   },
-  description: "Grupni treninzi snage i oblikovanja tijela za žene u Zadru. Male grupe do 8 polaznica, podrška zajednice i jednostavna rezervacija termina.",
+  description: "Grupni treninzi snage i oblikovanja tijela za žene u Zadru. Male grupe do 9 polaznica, podrška zajednice i jednostavna rezervacija termina.",
   keywords: ["trening", "fitness", "rezervacije", "snaga", "oblikovanje tijela"],
   openGraph: {
     title: "Ellevate Fitness Studio",

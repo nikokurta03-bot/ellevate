@@ -54,7 +54,7 @@ model TrainingSlot {
   date        DateTime // datum treninga
   startTime   String   // format: "08:00", "09:00", "18:00", "19:00", "20:00"
   endTime     String   // format: "09:00", "10:00", "19:00", "20:00", "21:00"
-  maxCapacity Int      @default(8)
+  maxCapacity Int      @default(9)
   createdAt   DateTime @default(now())
 
   reservations Reservation[]
@@ -77,4 +77,11 @@ model Reservation {
 
   @@unique([userId, slotId]) // korisnik može imati samo jednu rezervaciju po terminu
   @@index([status])
+}
+
+// Overrides survive regeneration without deleting reservations.
+model ScheduleDay {
+  date      DateTime @id
+  isClosed  Boolean  @default(false)
+  updatedAt DateTime @updatedAt
 }

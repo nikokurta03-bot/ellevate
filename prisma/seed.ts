@@ -1,15 +1,9 @@
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
+import { slotsForDay } from '../src/lib/schedule';
 import { addDays, format } from 'date-fns';
 
 const prisma = new PrismaClient();
-
-const TRAINING_TIMES = [
-    { start: '09:00', end: '10:00' },
-    { start: '18:15', end: '19:15' },
-    { start: '19:20', end: '20:20' },
-    { start: '20:30', end: '21:30' },
-];
 
 async function main() {
     console.log('🌱 Seeding database...');
@@ -47,20 +41,20 @@ async function main() {
         for (const dayOffset of trainingDays) {
             const date = addDays(startDate, week * 7 + dayOffset);
 
-            for (const time of TRAINING_TIMES) {
+            for (const time of slotsForDay(format(date, 'yyyy-MM-dd'))) {
                 await prisma.trainingSlot.upsert({
                     where: {
                         date_startTime: {
                             date: new Date(format(date, 'yyyy-MM-dd')),
-                            startTime: time.start,
+                            startTime: time.startTime,
                         },
                     },
                     update: {},
                     create: {
                         date: new Date(format(date, 'yyyy-MM-dd')),
-                        startTime: time.start,
-                        endTime: time.end,
-                        maxCapacity: 8,
+                        startTime: time.startTime,
+                        endTime: time.endTime,
+                        maxCapacity: time.maxCapacity,
                     },
                 });
             }
