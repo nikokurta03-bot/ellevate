@@ -28,7 +28,7 @@ export default function Dashboard() {
     // 🚀 OPTIMIZACIJA: Memoizirani izračuni datuma
     const todayInZagreb = studioDateKey(clock);
     const weekStart = useMemo(() => startOfWeek(addWeeks(new Date(`${todayInZagreb}T12:00:00`), weekOffset), { weekStartsOn: 1 }), [weekOffset, todayInZagreb]);
-    // Only Monday (0), Wednesday (2), Friday (4) - skip Tuesday and Thursday
+    // Include the regular days and any extra dates opened by the administrator.
     const weekDays = useMemo(() => Array.from({ length: 7 }, (_, i) => addDays(weekStart, i)).filter((day, i) => [0, 2, 4].includes(i) || slots.some(slot => slotDateKey(slot.date) === format(day, 'yyyy-MM-dd'))), [weekStart, slots]);
     const timeRows = useMemo(() => Array.from(new Set([...TRAINING_TIMES.map(time => time.start), ...slots.map(slot => slot.startTime)])).sort(), [slots]);
 

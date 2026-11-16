@@ -102,7 +102,10 @@ export default function AdminSchedule() {
                         <h2 className="text-xl font-bold">{dayLabel(date, { weekday: 'long', day: 'numeric', month: 'long' })}</h2>
                         <p className={`mt-1 text-sm ${closed ? 'text-amber-300' : 'text-slate-300'}`}>{closed ? 'Dan je zatvoren — treninzi se ne održavaju. Prijave su sačuvane.' : daySlots.length ? 'Dan je otvoren za treninge.' : 'Za ovaj dan nema termina. Otvaranje dodaje svih pet termina.'}</p>
                     </div>
-                    {!past && <button disabled={busy} className="btn-secondary min-h-[44px] shrink-0" onClick={toggleDay}>{closed || daySlots.length === 0 ? 'Otvori dan' : 'Zatvori dan'}</button>}
+                    {!past && <div className="flex flex-col gap-2 shrink-0">
+                        <button disabled={busy} className="btn-secondary min-h-[44px]" onClick={toggleDay}>{closed || daySlots.length === 0 ? 'Otvori dan' : 'Zatvori dan'}</button>
+                        {!closed && daySlots.length === 0 && <button disabled={busy} className="btn-secondary min-h-[44px]" onClick={() => void mutate('/api/days', 'PATCH', { date, isClosed: true }, 'Dan je zatvoren i neće se generirati termini.')}>Zatvori dan</button>}
+                    </div>}
                 </section>
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 items-start">
                     {daySlots.map(slot => {

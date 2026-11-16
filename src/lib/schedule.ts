@@ -36,4 +36,3 @@ export function slotsForDay(date: string) {
         maxCapacity: date >= SCHEDULE_EFFECTIVE_DATE ? 9 : 8,
     }));
 }
-
